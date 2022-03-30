@@ -1,23 +1,60 @@
-var builder = WebApplication.CreateBuilder(args);
+using Serilog;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace Chamados.Service.Api
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public class Program
+    {
+
+        public static void Main(string[] args)
+        {
+            IConfigurationRoot cfg = GetConfiguration();
+            ConfiguraLog(cfg);
+            try
+            {
+                Log.Information("Starting WebApi");
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Api not started. Catastrophic error.");
+                throw;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+        }
+
+        private static void ConfiguraLog(IConfigurationRoot configuration)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+        }
+
+        private static IConfigurationRoot GetConfiguration()
+        {
+            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{env}.json", optional: true)
+                .Build();
+            return configuration;
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+              .UseSerilog()
+              .ConfigureWebHostDefaults(wb =>
+              {
+                  wb.UseStartup<Startup>();
+                  wb.UseUrls("http://*:" + GetPort());
+              });
+
+        private static string GetPort()
+        {
+            return Environment.GetEnvironmentVariable("PORT") ?? "80";
+        }
+    }
 }
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
