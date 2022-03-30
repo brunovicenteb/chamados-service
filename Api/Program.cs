@@ -1,60 +1,27 @@
-using Serilog;
+﻿using Serilog;
+using Chamados.Service.IoC;
 
-namespace Chamados.Service.Api
-{
-    public class Program
-    {
+var builder = WebApplication.CreateBuilder(args);
 
-        public static void Main(string[] args)
-        {
-            IConfigurationRoot cfg = GetConfiguration();
-            ConfiguraLog(cfg);
-            try
-            {
-                Log.Information("Starting WebApi");
-                CreateHostBuilder(args).Build().Run();
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Api not started. Catastrophic error.");
-                throw;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
-        }
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
 
-        private static void ConfiguraLog(IConfigurationRoot configuration)
-        {
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfiguraServicoDeChamados();
 
-        private static IConfigurationRoot GetConfiguration()
-        {
-            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{env}.json", optional: true)
-                .Build();
-            return configuration;
-        }
+var app = builder.Build();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-              .UseSerilog()
-              .ConfigureWebHostDefaults(wb =>
-              {
-                  wb.UseStartup<Startup>();
-                  wb.UseUrls("http://*:" + GetPort());
-              });
+app.UseExceptionHandler("/error");
+if (app.Environment.IsDevelopment())
+    app.UseDeveloperExceptionPage();
+app.UseRouting();
+app.ConfiguraChamados(app.Environment);
+app.MapControllers();
 
-        private static string GetPort()
-        {
-            return Environment.GetEnvironmentVariable("PORT") ?? "80";
-        }
-    }
-}
+Log.Logger.Information("#############################################################");
+Log.Logger.Information("###              Executando Configurações                 ###");
+Log.Logger.Information("#############################################################");
+
+app.Run();

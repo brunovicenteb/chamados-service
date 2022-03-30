@@ -52,7 +52,7 @@ public class ChamadoController : ManagedController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Atualizar([FromBody] Domain.Entities.Chamados chamado)
     {
-        return await TryExecuteOK(async () => await _ChamadoServico.SalvarAsync(chamado));
+        return await TryExecuteOK(async () => await _ChamadoServico.AtualizarAsync(chamado));
     }
 
     /// <summary>Salva um novo chamado</summary>
@@ -64,7 +64,7 @@ public class ChamadoController : ManagedController
     {
         Func<Task<object>> execute = async delegate
         {
-            return await _ChamadoServico.SalvarAsync(chamado);
+            return await _ChamadoServico.InserirAsync(chamado);
         };
         Func<object, IActionResult> action = delegate (object result)
         {
