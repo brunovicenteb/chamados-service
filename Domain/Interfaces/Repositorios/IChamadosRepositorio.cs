@@ -5,11 +5,11 @@ public interface IChamadosRepositorio
 
     Task<long> PegarQuantidadeAsync(bool apenasAbertos);
 
-    Task<IEnumerable<Entities.Chamados>> PegarChamadosAsync(int pInicio, int pLimite);
+    Task<IEnumerable<Entities.Chamados>> PegarChamadosAsync(int inicio, int limite);
 
-    Task<Entities.Chamados> PegarChamadoPorIdAsync(int id);
+    Task<Entities.Chamados> PegarChamadoPorIdAsync(string id);
 
-    Task<bool> InserirAsync(Entities.Chamados chamado);
+    Task<Entities.Chamados> InserirAsync(Entities.Chamados chamado);
 
-    Task<bool> AtualizarAsync(Entities.Chamados chamado);
+    Task<Entities.Chamados> AtualizarAsync(Entities.Chamados chamado);
 }
