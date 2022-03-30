@@ -3,7 +3,7 @@
 namespace Chamados.Service.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("chamados")]
 public class ChamadoController : ManagedController
 {
     private readonly IChamadosServico _ChamadoServico;
