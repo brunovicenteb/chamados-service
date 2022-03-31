@@ -2,14 +2,17 @@ using NUnit.Framework;
 using Microsoft.AspNetCore.Mvc;
 using Chamados.Service.Tests.Mock;
 using Chamados.Service.Application;
+using Chamados.Service.Domain.Enums;
 using Chamados.Service.Api.Controllers;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
-using Chamados.Service.Domain.Enums;
+using System;
 
 namespace Chamados.Service.Tests;
 public class ArticleControllerTest
 {
+    private const string _JamesCameronId = "6244c7ea757c678abca6716d";
+
     [Test]
     public void TestaPegarQuantidade()
     {
@@ -29,6 +32,38 @@ public class ArticleControllerTest
     }
 
     [Test]
+    public void TestaPegarChamadoPorId()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.PegarChamadoPorId(_JamesCameronId).Result;
+        var chamado = AfirmarOk<Domain.Entities.Chamados>(resultado, c);
+        Assert.IsFalse(string.IsNullOrEmpty(chamado.Id));
+        Assert.IsFalse(chamado.Aberto);
+        Assert.AreEqual("Limpesa das lentes", chamado.Assunto);
+        Assert.AreEqual("James Cameron", chamado.NomePessoa);
+        Assert.AreEqual(Gravidade.Moderado, chamado.Gravidade);
+        Assert.AreEqual("82926196075", chamado.CPF);
+        Assert.AreEqual("james.cameron@gmail.com", chamado.Email);
+        Assert.AreEqual("Precisamos limpar tudo semanalmente.", chamado.Descricao);
+    }
+
+    [Test]
+    public void TestaPegarChamadoPorIdComIdInexistente()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.PegarChamadoPorId(Guid.NewGuid().ToString()).Result;
+        AfirmarNotFound(resultado, "Não foi possível encontrar o chamado com o identificador informado.");
+    }
+
+    [Test]
+    public void TestaPegarChamadoPorIdSemPassarId()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.PegarChamadoPorId(string.Empty).Result;
+        AfirmarBadRequest(resultado, "Não é possível encontrar um chamado sem um identificador.");
+    }
+
+    [Test]
     public void TestaCriarChamado()
     {
         var chamado = CriarChamado(string.Empty, "Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "39815683039",
@@ -37,12 +72,13 @@ public class ArticleControllerTest
         IActionResult resultado = c.Inserir(chamado).Result;
         var resultadoChamado = AfirmarOkCriado<Domain.Entities.Chamados>(resultado, c);
         Assert.IsFalse(string.IsNullOrEmpty(resultadoChamado.Id));
-        Assert.AreEqual("Maria Sharapova", chamado.NomePessoa);
-        Assert.AreEqual("Substituição de Raquete", chamado.Assunto);
-        Assert.AreEqual(Gravidade.Bloqueador, chamado.Gravidade);
-        Assert.AreEqual("39815683039", chamado.CPF);
-        Assert.AreEqual("maria.sharapova@gmail.com", chamado.Email);
-        Assert.AreEqual("Preciso repor minha raquete de treinos com urgência.", chamado.Descricao);
+        Assert.IsTrue(resultadoChamado.Aberto);
+        Assert.AreEqual("Maria Sharapova", resultadoChamado.NomePessoa);
+        Assert.AreEqual("Substituição de Raquete", resultadoChamado.Assunto);
+        Assert.AreEqual(Gravidade.Bloqueador, resultadoChamado.Gravidade);
+        Assert.AreEqual("39815683039", resultadoChamado.CPF);
+        Assert.AreEqual("maria.sharapova@gmail.com", resultadoChamado.Email);
+        Assert.AreEqual("Preciso repor minha raquete de treinos com urgência.", resultadoChamado.Descricao);
     }
 
     [Test]
@@ -53,7 +89,7 @@ public class ArticleControllerTest
             "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Inserir(chamado).Result;
-        AfirmarErro(resultado, "Não é possível inserir um chamado que já possui identificador.");
+        AfirmarBadRequest(resultado, "Não é possível inserir um chamado que já possui identificador.");
     }
 
     //[Test]
@@ -255,7 +291,15 @@ public class ArticleControllerTest
     //    Assert.AreEqual(pMessage, errorResult.Value);
     //}
 
-    private void AfirmarErro(IActionResult resultado, string mensagem)
+    private void AfirmarNotFound(IActionResult resultado, string mensagem)
+    {
+        Assert.IsInstanceOf<NotFoundObjectResult>(resultado);
+        NotFoundObjectResult notFoundResultado = (NotFoundObjectResult)resultado;
+        Assert.IsInstanceOf<string>(notFoundResultado.Value);
+        Assert.AreEqual(mensagem, notFoundResultado.Value);
+    }
+
+    private void AfirmarBadRequest(IActionResult resultado, string mensagem)
     {
         Assert.IsInstanceOf<BadRequestObjectResult>(resultado);
         BadRequestObjectResult errorResult = (BadRequestObjectResult)resultado;
@@ -298,6 +342,7 @@ public class ArticleControllerTest
     {
         var c = new Domain.Entities.Chamados();
         c.Id = id;
+        c.Aberto = true;
         c.NomePessoa = nomePessoa;
         c.Gravidade = gravidade;
         c.Assunto = assunto;

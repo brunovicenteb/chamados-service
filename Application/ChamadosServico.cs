@@ -15,6 +15,8 @@ public class ChamadosServico : IChamadosServico
 
     public async Task<Domain.Entities.Chamados> PegarChamadoPorIdAsync(string id)
     {
+        if (string.IsNullOrEmpty(id))
+            throw new BadRequestException("Não é possível encontrar um chamado sem um identificador.");
         Domain.Entities.Chamados c = await _Repositorio.PegarChamadoPorIdAsync(id);
         if (c == null)
             throw new NotFoundException("Não foi possível encontrar o chamado com o identificador informado.");
@@ -36,10 +38,10 @@ public class ChamadosServico : IChamadosServico
     public async Task<Domain.Entities.Chamados> AtualizarAsync(Domain.Entities.Chamados chamado)
     {
         if (string.IsNullOrEmpty(chamado.Id))
-            throw new BadRequestException("Não é possível atualizar um chamado sem identificador.");
+            throw new BadRequestException("Não é possível atualizar um chamado sem um identificador.");
         Domain.Entities.Chamados c = await _Repositorio.PegarChamadoPorIdAsync(chamado.Id);
         if (c == null)
-            throw new BadRequestException("Nenhum chamado foi encontrado com esse identificador.");
+            throw new NotFoundException("Nenhum chamado foi encontrado com esse identificador.");
         return await _Repositorio.AtualizarAsync(chamado);
     }
 
