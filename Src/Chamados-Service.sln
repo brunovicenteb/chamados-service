@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chamados.Service.Api", "Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chamados.Service.Toolkit", "Toolkit\Chamados.Service.Toolkit.csproj", "{FB3C460A-9966-4657-8F77-0BF6C4AF56FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chamados.Service.Tests", "Tests\Chamados.Service.Tests.csproj", "{7855CB67-5F15-49EA-97C0-F25915DDCD1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chamados.Service.Tests", "..\Test\Chamados.Service.Tests.csproj", "{46526B4F-72AD-426F-A44A-5BFE3F3E107B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{FB3C460A-9966-4657-8F77-0BF6C4AF56FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB3C460A-9966-4657-8F77-0BF6C4AF56FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB3C460A-9966-4657-8F77-0BF6C4AF56FC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7855CB67-5F15-49EA-97C0-F25915DDCD1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7855CB67-5F15-49EA-97C0-F25915DDCD1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7855CB67-5F15-49EA-97C0-F25915DDCD1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7855CB67-5F15-49EA-97C0-F25915DDCD1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46526B4F-72AD-426F-A44A-5BFE3F3E107B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46526B4F-72AD-426F-A44A-5BFE3F3E107B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46526B4F-72AD-426F-A44A-5BFE3F3E107B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46526B4F-72AD-426F-A44A-5BFE3F3E107B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
