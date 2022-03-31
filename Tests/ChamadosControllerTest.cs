@@ -1,193 +1,201 @@
 using NUnit.Framework;
+using Microsoft.AspNetCore.Mvc;
+using Chamados.Service.Tests.Mock;
+using Chamados.Service.Application;
+using Chamados.Service.Api.Controllers;
+using Chamados.Service.Domain.Interfaces.Servicos;
+using Chamados.Service.Domain.Interfaces.Repositorios;
 
 namespace Chamados.Service.Tests;
 public class ArticleControllerTest
 {
     [Test]
-    public void TestEndpointCount()
+    public void TestaPegarQuantidade()
     {
-        //XMockCache cache = new XMockCache();
-        //ArticleController c = CreateController(true, cache);
-        //IActionResult result = c.Count();
-        //long longResult = AssertOk<long>(result, 15);
-        //Assert.AreEqual(longResult, 15);
-        //Assert.IsFalse(cache.IsLastHit);
-
-        //result = c.Count(); // Call again to test cache.
-        //longResult = AssertOk<long>(result, 15);
-        //Assert.AreEqual(longResult, 15);
-        //Assert.IsTrue(cache.IsLastHit);
+        ChamadoController c = CreateController(true);
+        IActionResult result = c.PegarQuantidade(false).Result;
+        long longResult = AssertOk<long>(result, 5);
+        Assert.AreEqual(longResult, 5);
     }
 
     [Test]
-    public void TestEndpointCreateArticleWithoutID()
+    public void TestaPegarQuantidadeApenasComChamadosAbertos()
     {
-        //XArticle a = CreateArticle(null);
-        //Assert.IsTrue(a.ID < 0);
+        ChamadoController c = CreateController(true);
+        IActionResult result = c.PegarQuantidade(true).Result;
+        long longResult = AssertOk<long>(result, 4);
+        Assert.AreEqual(longResult, 4);
     }
 
-    [Test]
-    public void TestEndpointCreateArticleWithID()
-    {
-        //XArticle a = CreateArticle(15788745);
-        //Assert.AreEqual(15788745, a.ID);
-    }
+    //[Test]
+    //public void TestEndpointCreateArticleWithoutID()
+    //{
+    //    //XArticle a = CreateArticle(null);
+    //    //Assert.IsTrue(a.ID < 0);
+    //}
 
-    [Test]
-    public void TestEndpointCreateArticleWithErrors()
-    {
-        //ArticleController c = CreateController();
-        //IActionResult result = c.Articles(null);
-        //AssertError(result, "Invalid Article.");
+    //[Test]
+    //public void TestEndpointCreateArticleWithID()
+    //{
+    //    //XArticle a = CreateArticle(15788745);
+    //    //Assert.AreEqual(15788745, a.ID);
+    //}
 
-        //XArticle a = CreateArticleObject(5789654, null, null, null);
-        //result = c.Articles(a);
-        //AssertError(result, $"Title not informed.{Environment.NewLine}Url not informed.{Environment.NewLine}ImageUrl not informed.");
+    //[Test]
+    //public void TestEndpointCreateArticleWithErrors()
+    //{
+    //    //ArticleController c = CreateController();
+    //    //IActionResult result = c.Articles(null);
+    //    //AssertError(result, "Invalid Article.");
 
-        //a.Title = "Starlink Mission";
-        //result = c.Articles(a);
-        //AssertError(result, $"Url not informed.{Environment.NewLine}ImageUrl not informed.");
+    //    //XArticle a = CreateArticleObject(5789654, null, null, null);
+    //    //result = c.Articles(a);
+    //    //AssertError(result, $"Title not informed.{Environment.NewLine}Url not informed.{Environment.NewLine}ImageUrl not informed.");
 
-        //a.Url = "This is a Url content";
-        //result = c.Articles(a);
-        //AssertError(result, $"ImageUrl not informed.");
-    }
+    //    //a.Title = "Starlink Mission";
+    //    //result = c.Articles(a);
+    //    //AssertError(result, $"Url not informed.{Environment.NewLine}ImageUrl not informed.");
 
-    [Test]
-    public void TestEndpointUpdateArticle()
-    {
-        //ArticleController c = CreateController(true);
-        //IActionResult result = c.Count();
-        //long longResult = AssertOk<long>(result, 15);
+    //    //a.Url = "This is a Url content";
+    //    //result = c.Articles(a);
+    //    //AssertError(result, $"ImageUrl not informed.");
+    //}
 
-        //result = c.Articles(4067); // Starlink Mission
-        //Assert.IsInstanceOf<OkObjectResult>(result);
-        //OkObjectResult okResult = (OkObjectResult)result;
-        //Assert.IsInstanceOf<XArticle>(okResult.Value);
-        //XArticle a = (XArticle)okResult.Value;
-        //a.Title = a.Title += " [Updated]";
-        //c.ArticlesPut(4067, a);
-        //AssertStarlinkMission(a, "Starlink Mission [Updated]");
+    //[Test]
+    //public void TestEndpointUpdateArticle()
+    //{
+    //    //ArticleController c = CreateController(true);
+    //    //IActionResult result = c.Count();
+    //    //long longResult = AssertOk<long>(result, 15);
 
-        //result = c.Count();
-        //AssertOk<long>(result, longResult);
-    }
+    //    //result = c.Articles(4067); // Starlink Mission
+    //    //Assert.IsInstanceOf<OkObjectResult>(result);
+    //    //OkObjectResult okResult = (OkObjectResult)result;
+    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
+    //    //XArticle a = (XArticle)okResult.Value;
+    //    //a.Title = a.Title += " [Updated]";
+    //    //c.ArticlesPut(4067, a);
+    //    //AssertStarlinkMission(a, "Starlink Mission [Updated]");
 
-    [Test]
-    public void TestEndpointUpdateArticleErrors()
-    {
-        //var configuration = new MapperConfiguration(cfg =>
-        //{
-        //    cfg.CreateMap<XArticle, XArticle>();
-        //});
-        //Mapper m = new Mapper(configuration);
-        //ArticleController c = CreateController(true);
-        //IActionResult result = c.ArticlesPut(4067, null);
-        //AssertError(result, "Invalid Article.");
+    //    //result = c.Count();
+    //    //AssertOk<long>(result, longResult);
+    //}
 
-        //result = c.Articles(4067); // Starlink Mission
-        //Assert.IsInstanceOf<OkObjectResult>(result);
-        //OkObjectResult okResult = (OkObjectResult)result;
-        //Assert.IsInstanceOf<XArticle>(okResult.Value);
-        //XArticle a = m.Map<XArticle>(okResult.Value);
+    //[Test]
+    //public void TestEndpointUpdateArticleErrors()
+    //{
+    //    //var configuration = new MapperConfiguration(cfg =>
+    //    //{
+    //    //    cfg.CreateMap<XArticle, XArticle>();
+    //    //});
+    //    //Mapper m = new Mapper(configuration);
+    //    //ArticleController c = CreateController(true);
+    //    //IActionResult result = c.ArticlesPut(4067, null);
+    //    //AssertError(result, "Invalid Article.");
 
-        //result = c.ArticlesPut(154787985, a);
-        //AssertNotFoundError(result, "Article 154787985 not found.");
+    //    //result = c.Articles(4067); // Starlink Mission
+    //    //Assert.IsInstanceOf<OkObjectResult>(result);
+    //    //OkObjectResult okResult = (OkObjectResult)result;
+    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
+    //    //XArticle a = m.Map<XArticle>(okResult.Value);
 
-        //a.Title = a.Url = a.ImageUrl = string.Empty;
-        //result = c.ArticlesPut(4067, a);
-        //AssertError(result, $"Title not informed.{Environment.NewLine}Url not informed.{Environment.NewLine}ImageUrl not informed.");
+    //    //result = c.ArticlesPut(154787985, a);
+    //    //AssertNotFoundError(result, "Article 154787985 not found.");
 
-        //a.Title = "Starlink Mission";
-        //result = c.ArticlesPut(4067, a);
-        //AssertError(result, $"Url not informed.{Environment.NewLine}ImageUrl not informed.");
+    //    //a.Title = a.Url = a.ImageUrl = string.Empty;
+    //    //result = c.ArticlesPut(4067, a);
+    //    //AssertError(result, $"Title not informed.{Environment.NewLine}Url not informed.{Environment.NewLine}ImageUrl not informed.");
 
-        //a.Url = "This is a Url content";
-        //result = c.ArticlesPut(4067, a);
-        //AssertError(result, $"ImageUrl not informed.");
-    }
+    //    //a.Title = "Starlink Mission";
+    //    //result = c.ArticlesPut(4067, a);
+    //    //AssertError(result, $"Url not informed.{Environment.NewLine}ImageUrl not informed.");
 
-    [Test]
-    public void TestEndpointGetArticleByID()
-    {
-        //ArticleController c = CreateController(true);
-        //IActionResult result = c.Articles(4067);
-        //Assert.IsInstanceOf<OkObjectResult>(result);
-        //OkObjectResult okResult = (OkObjectResult)result;
-        //Assert.IsInstanceOf<XArticle>(okResult.Value);
-        //XArticle a = (XArticle)okResult.Value;
-        //AssertStarlinkMission(a);
-    }
+    //    //a.Url = "This is a Url content";
+    //    //result = c.ArticlesPut(4067, a);
+    //    //AssertError(result, $"ImageUrl not informed.");
+    //}
 
-    [Test]
-    public void TestEndpointGetArticleByIDError()
-    {
-        //ArticleController c = CreateController(true);
-        //IActionResult result = c.Articles(989857457);
-        //AssertNotFoundError(result, "Article 989857457 not found.");
-    }
+    //[Test]
+    //public void TestEndpointGetArticleByID()
+    //{
+    //    //ArticleController c = CreateController(true);
+    //    //IActionResult result = c.Articles(4067);
+    //    //Assert.IsInstanceOf<OkObjectResult>(result);
+    //    //OkObjectResult okResult = (OkObjectResult)result;
+    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
+    //    //XArticle a = (XArticle)okResult.Value;
+    //    //AssertStarlinkMission(a);
+    //}
 
-    [Test]
-    public void TestEndpointSearchArticleEmpty()
-    {
-        //ArticleController c = CreateController();
-        //IActionResult result = c.Articles();
-        //Assert.IsInstanceOf<OkObjectResult>(result);
-        //OkObjectResult okResult = (OkObjectResult)result;
-        //Assert.IsInstanceOf<IEnumerable<XArticle>>(okResult.Value);
-        //IEnumerable<XArticle> enm = (IEnumerable<XArticle>)okResult.Value;
-        //XArticle[] resultArticles = enm.ToArray();
-        //Assert.AreEqual(0, resultArticles.Length);
-    }
+    //[Test]
+    //public void TestEndpointGetArticleByIDError()
+    //{
+    //    //ArticleController c = CreateController(true);
+    //    //IActionResult result = c.Articles(989857457);
+    //    //AssertNotFoundError(result, "Article 989857457 not found.");
+    //}
 
-    [Test]
-    public void TestEndpointSearchPaginatedArticles()
-    {
-        //// Testa paginação retornando o valor limite padrão de 10 artigos
-        //ArticleController c = AssertSearchPaginatedArticles(null, null, 10);
+    //[Test]
+    //public void TestEndpointSearchArticleEmpty()
+    //{
+    //    //ArticleController c = CreateController();
+    //    //IActionResult result = c.Articles();
+    //    //Assert.IsInstanceOf<OkObjectResult>(result);
+    //    //OkObjectResult okResult = (OkObjectResult)result;
+    //    //Assert.IsInstanceOf<IEnumerable<XArticle>>(okResult.Value);
+    //    //IEnumerable<XArticle> enm = (IEnumerable<XArticle>)okResult.Value;
+    //    //XArticle[] resultArticles = enm.ToArray();
+    //    //Assert.AreEqual(0, resultArticles.Length);
+    //}
 
-        //// Testar pular mais do que o total de 5 em 5 artigos
-        //AssertSearchPaginatedArticles(16, null, 0);
+    //[Test]
+    //public void TestEndpointSearchPaginatedArticles()
+    //{
+    //    //// Testa paginação retornando o valor limite padrão de 10 artigos
+    //    //ArticleController c = AssertSearchPaginatedArticles(null, null, 10);
 
-        //// Testar paginação de 5 em 5 artigos
-        //AssertSearchPaginatedArticles(null, 5, 5);
-        //AssertSearchPaginatedArticles(5, 5, 5);
-        //AssertSearchPaginatedArticles(10, 5, 5);
-        //AssertSearchPaginatedArticles(15, 5, 0);
+    //    //// Testar pular mais do que o total de 5 em 5 artigos
+    //    //AssertSearchPaginatedArticles(16, null, 0);
 
-        //// Testar paginação de 10 em 10 artigos
-        //AssertSearchPaginatedArticles(null, 10, 10);
-        //AssertSearchPaginatedArticles(10, 10, 5);
-        //AssertSearchPaginatedArticles(15, 5, 0);
-    }
+    //    //// Testar paginação de 5 em 5 artigos
+    //    //AssertSearchPaginatedArticles(null, 5, 5);
+    //    //AssertSearchPaginatedArticles(5, 5, 5);
+    //    //AssertSearchPaginatedArticles(10, 5, 5);
+    //    //AssertSearchPaginatedArticles(15, 5, 0);
 
-    [Test]
-    public void TestEndpointArticlesDeleteTrue()
-    {
-        //ArticleController c = CreateController(true);
-        //IActionResult result = c.Count();
-        //long longResult = AssertOk<long>(result, 15);
+    //    //// Testar paginação de 10 em 10 artigos
+    //    //AssertSearchPaginatedArticles(null, 10, 10);
+    //    //AssertSearchPaginatedArticles(10, 10, 5);
+    //    //AssertSearchPaginatedArticles(15, 5, 0);
+    //}
 
-        //result = c.ArticlesDelete(4067);
-        //Assert.IsInstanceOf<NoContentResult>(result);
+    //[Test]
+    //public void TestEndpointArticlesDeleteTrue()
+    //{
+    //    //ArticleController c = CreateController(true);
+    //    //IActionResult result = c.Count();
+    //    //long longResult = AssertOk<long>(result, 15);
 
-        //result = c.Count();
-        //AssertOk<long>(result, longResult - 1);
-    }
+    //    //result = c.ArticlesDelete(4067);
+    //    //Assert.IsInstanceOf<NoContentResult>(result);
 
-    [Test]
-    public void TestEndpointArticlesDeleteFalse()
-    {
-        //ArticleController c = CreateController(true);
-        //IActionResult result = c.Count();
-        //long longResult = AssertOk<long>(result, 15);
+    //    //result = c.Count();
+    //    //AssertOk<long>(result, longResult - 1);
+    //}
 
-        //result = c.ArticlesDelete(157849);
-        //Assert.IsInstanceOf<NotFoundResult>(result);
+    //[Test]
+    //public void TestEndpointArticlesDeleteFalse()
+    //{
+    //    //ArticleController c = CreateController(true);
+    //    //IActionResult result = c.Count();
+    //    //long longResult = AssertOk<long>(result, 15);
 
-        //result = c.Count();
-        //AssertOk<long>(result, 15);
-    }
+    //    //result = c.ArticlesDelete(157849);
+    //    //Assert.IsInstanceOf<NotFoundResult>(result);
+
+    //    //result = c.Count();
+    //    //AssertOk<long>(result, 15);
+    //}
 
     //private long GetCount(ArticleController pController)
     //{
@@ -196,17 +204,12 @@ public class ArticleControllerTest
     //    return (long)okResult.Value;
     //}
 
-    //private ArticleController CreateController(bool pLoadData = false, XICache pCache = null)
-    //{
-    //    var serviceProvider = new ServiceCollection()
-    //        .AddLogging()
-    //        .BuildServiceProvider();
-    //    var factory = serviceProvider.GetService<ILoggerFactory>();
-    //    var logger = factory.CreateLogger<XArticleServiceDecorator>();
-    //    XIArticleService app = new XArticleService(new XMockArticle(pLoadData));
-    //    XIArticleService appCache = new XArticleServiceDecorator(app, pCache ?? new XMockCache(), logger);
-    //    return new ArticleController(appCache);
-    //}
+    private ChamadoController CreateController(bool pLoadData = false)
+    {
+        IChamadosRepositorio mock = new ChamadosRepositorioMock(pLoadData);
+        IChamadosServico servico = new ChamadosServico(mock);
+        return new ChamadoController(servico);
+    }
 
     //public ArticleController AssertSearchPaginatedArticles(int? pStart, int? pLimit, int pAmount, ArticleController pController = null)
     //{
@@ -238,13 +241,13 @@ public class ArticleControllerTest
     //    Assert.AreEqual(pMessage, errorResult.Value);
     //}
 
-    //private T AssertOk<T>(IActionResult pResult, object pValue)
-    //{
-    //    Assert.IsInstanceOf<OkObjectResult>(pResult);
-    //    OkObjectResult okResult = (OkObjectResult)pResult;
-    //    Assert.IsInstanceOf<T>(okResult.Value);
-    //    return (T)okResult.Value;
-    //}
+    private T AssertOk<T>(IActionResult result, object valor)
+    {
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        OkObjectResult okResult = (OkObjectResult)result;
+        Assert.IsInstanceOf<T>(okResult.Value);
+        return (T)okResult.Value;
+    }
 
     //private T AssertOkCreated<T>(IActionResult pResult, object pValue)
     //{

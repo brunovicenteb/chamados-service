@@ -1,7 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Chamados.Service.Domain.Interfaces.Repositorios;
 
 namespace Chamados.Service.Tests.Mock;
@@ -10,22 +14,22 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
 {
     private readonly List<Domain.Entities.Chamados> _Chamados = new List<Domain.Entities.Chamados>();
 
-    //public ChamadosRepositorioMock(bool pLoadData)
-    //{
-    //    if (!pLoadData)
-    //        return;
-    //    Assembly assembly = Assembly.GetExecutingAssembly();
-    //    var resourcePath = String.Format("{0}.{1}", Regex.Replace(assembly.ManifestModule.Name, @"\.(exe|dll)$",
-    //      string.Empty, RegexOptions.IgnoreCase), "Resources.ArticlesData.json");
-    //    using (Stream stream = assembly.GetManifestResourceStream(resourcePath))
-    //    {
-    //        using (StreamReader reader = new StreamReader(stream))
-    //        {
-    //            string json = reader.ReadToEnd();
-    //            _Articles = JsonConvert.DeserializeObject<List<XArticle>>(json);
-    //        }
-    //    }
-    //}
+    public ChamadosRepositorioMock(bool pLoadData)
+    {
+        if (!pLoadData)
+            return;
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        var resourcePath = string.Format("{0}.{1}", Regex.Replace(assembly.ManifestModule.Name, @"\.(exe|dll)$",
+          string.Empty, RegexOptions.IgnoreCase), "Resources.ChamadosData.json");
+        using (Stream stream = assembly.GetManifestResourceStream(resourcePath))
+        {
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string json = reader.ReadToEnd();
+                _Chamados = JsonConvert.DeserializeObject<List<Domain.Entities.Chamados>>(json);
+            }
+        }
+    }
 
     //public XArticle Add(XArticle pValue)
     //{
@@ -108,6 +112,8 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
+            if (apenasAbertos)
+                return Convert.ToInt64(_Chamados.Count(o => o.Aberto));
             return Convert.ToInt64(_Chamados.Count);
         });
     }
