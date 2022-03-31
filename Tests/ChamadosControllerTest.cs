@@ -5,6 +5,7 @@ using Chamados.Service.Application;
 using Chamados.Service.Api.Controllers;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
+using Chamados.Service.Domain.Enums;
 
 namespace Chamados.Service.Tests;
 public class ArticleControllerTest
@@ -12,27 +13,48 @@ public class ArticleControllerTest
     [Test]
     public void TestaPegarQuantidade()
     {
-        ChamadoController c = CreateController(true);
+        ChamadoController c = CriarController(true);
         IActionResult result = c.PegarQuantidade(false).Result;
-        long longResult = AssertOk<long>(result, 5);
+        long longResult = AfirmarOk<long>(result, 4);
+        Assert.AreEqual(longResult, 4);
+    }
+
+    [Test]
+    public void TestaPegarQuantidadeIncluindoChamadosFechados()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult result = c.PegarQuantidade(true).Result;
+        long longResult = AfirmarOk<long>(result, 5);
         Assert.AreEqual(longResult, 5);
     }
 
     [Test]
-    public void TestaPegarQuantidadeApenasComChamadosAbertos()
+    public void TestaCriarChamado()
     {
-        ChamadoController c = CreateController(true);
-        IActionResult result = c.PegarQuantidade(true).Result;
-        long longResult = AssertOk<long>(result, 4);
-        Assert.AreEqual(longResult, 4);
+        var chamado = CriarChamado(string.Empty, "Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "39815683039",
+            "maria.sharapova@gmail.com", "Preciso repor minha raquete de treinos com urgência.");
+        ChamadoController c = CriarController(false);
+        IActionResult resultado = c.Inserir(chamado).Result;
+        var resultadoChamado = AfirmarOkCriado<Domain.Entities.Chamados>(resultado, c);
+        Assert.IsFalse(string.IsNullOrEmpty(resultadoChamado.Id));
+        Assert.AreEqual("Maria Sharapova", chamado.NomePessoa);
+        Assert.AreEqual("Substituição de Raquete", chamado.Assunto);
+        Assert.AreEqual(Gravidade.Bloqueador, chamado.Gravidade);
+        Assert.AreEqual("39815683039", chamado.CPF);
+        Assert.AreEqual("maria.sharapova@gmail.com", chamado.Email);
+        Assert.AreEqual("Preciso repor minha raquete de treinos com urgência.", chamado.Descricao);
     }
 
-    //[Test]
-    //public void TestEndpointCreateArticleWithoutID()
-    //{
-    //    //XArticle a = CreateArticle(null);
-    //    //Assert.IsTrue(a.ID < 0);
-    //}
+    [Test]
+    public void TestaCriarChamadoComIdPreenchido()
+    {
+        //Criar objeto já existente dentro do Mock.
+        var chamado = CriarChamado("6244c826eb6aeb6c5f44b0d0", "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
+            "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.Inserir(chamado).Result;
+        AfirmarErro(resultado, "Não é possível inserir um chamado que já possui identificador.");
+    }
 
     //[Test]
     //public void TestEndpointCreateArticleWithID()
@@ -204,7 +226,7 @@ public class ArticleControllerTest
     //    return (long)okResult.Value;
     //}
 
-    private ChamadoController CreateController(bool pLoadData = false)
+    private ChamadoController CriarController(bool pLoadData = false)
     {
         IChamadosRepositorio mock = new ChamadosRepositorioMock(pLoadData);
         IChamadosServico servico = new ChamadosServico(mock);
@@ -233,29 +255,29 @@ public class ArticleControllerTest
     //    Assert.AreEqual(pMessage, errorResult.Value);
     //}
 
-    //private void AssertError(IActionResult pResult, string pMessage)
-    //{
-    //    Assert.IsInstanceOf<BadRequestObjectResult>(pResult);
-    //    BadRequestObjectResult errorResult = (BadRequestObjectResult)pResult;
-    //    Assert.IsInstanceOf<string>(errorResult.Value);
-    //    Assert.AreEqual(pMessage, errorResult.Value);
-    //}
-
-    private T AssertOk<T>(IActionResult result, object valor)
+    private void AfirmarErro(IActionResult resultado, string mensagem)
     {
-        Assert.IsInstanceOf<OkObjectResult>(result);
-        OkObjectResult okResult = (OkObjectResult)result;
+        Assert.IsInstanceOf<BadRequestObjectResult>(resultado);
+        BadRequestObjectResult errorResult = (BadRequestObjectResult)resultado;
+        Assert.IsInstanceOf<string>(errorResult.Value);
+        Assert.AreEqual(mensagem, errorResult.Value);
+    }
+
+    private T AfirmarOk<T>(IActionResult resultado, object valor)
+    {
+        Assert.IsInstanceOf<OkObjectResult>(resultado);
+        OkObjectResult okResult = (OkObjectResult)resultado;
         Assert.IsInstanceOf<T>(okResult.Value);
         return (T)okResult.Value;
     }
 
-    //private T AssertOkCreated<T>(IActionResult pResult, object pValue)
-    //{
-    //    Assert.IsInstanceOf<CreatedAtActionResult>(pResult);
-    //    CreatedAtActionResult createdResult = (CreatedAtActionResult)pResult;
-    //    Assert.IsInstanceOf<T>(createdResult.Value);
-    //    return (T)createdResult.Value;
-    //}
+    private T AfirmarOkCriado<T>(IActionResult resultado, object valor)
+    {
+        Assert.IsInstanceOf<CreatedAtActionResult>(resultado);
+        CreatedAtActionResult resultadoOkCriado = (CreatedAtActionResult)resultado;
+        Assert.IsInstanceOf<T>(resultadoOkCriado.Value);
+        return (T)resultadoOkCriado.Value;
+    }
 
     //private void AssertStarlinkMission(XArticle pArticle, string pTitle = "Starlink Mission")
     //{
@@ -272,18 +294,18 @@ public class ArticleControllerTest
     //    Assert.AreEqual(0, pArticle.Events.Length);
     //}
 
-    //private XArticle CreateArticleObject(int? pID, string pTitle, string pUrl, string pImageUrl)
-    //{
-    //    XArticle a = new XArticle();
-    //    if (pID.HasValue)
-    //        a.ID = pID.Value;
-    //    a.Featured = false;
-    //    a.Title = pTitle;
-    //    a.Summary = "On 24 January, 30 days after launch on Christmas Day, the James Webb Space Telescope...";
-    //    a.Url = pUrl;
-    //    a.ImageUrl = pImageUrl;
-    //    return a;
-    //}
+    private Domain.Entities.Chamados CriarChamado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
+    {
+        var c = new Domain.Entities.Chamados();
+        c.Id = id;
+        c.NomePessoa = nomePessoa;
+        c.Gravidade = gravidade;
+        c.Assunto = assunto;
+        c.CPF = cpf;
+        c.Email = email;
+        c.Descricao = descricao;
+        return c;
+    }
 
     //private XArticle CreateArticle(int? pID, string pTitle = "James Webb reach lagrange point 2", string pUrl = "This is a Url content", string pImageUrl = "This is a ImageUrl content")
     //{

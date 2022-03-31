@@ -9,8 +9,9 @@ namespace Chamados.Service.Domain.Entities;
 public class Chamados
 {
     [BsonId]
+    [JsonPropertyName("id")]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string ObjectID
+    public string Id
     {
         get; set;
     }

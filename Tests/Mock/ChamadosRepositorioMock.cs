@@ -31,50 +31,12 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         }
     }
 
-    //public XArticle Add(XArticle pValue)
-    //{
-    //    _Articles.Add(pValue);
-    //    return pValue;
-    //}
-
-    //public long Count()
-    //{
-    //    return _Articles.Count;
-    //}
-
-    //public bool Delete(int pObjectID)
-    //{
-    //    XArticle a = _Articles.FirstOrDefault(o => o.ID == pObjectID);
-    //    if (a == null)
-    //        return false;
-    //    _Articles.Remove(a);
-    //    return true;
-    //}
-
-    //public IEnumerable<XArticle> Get(int pLimit, int pStart)
-    //{
-    //    return _Articles.OrderBy(o => o.Title).Skip(pStart).Take(pLimit);
-    //}
-
-    //public XArticle GetObjectByID(int pObjectID)
-    //{
-    //    return _Articles.FirstOrDefault(o => o.ID == pObjectID);
-    //}
-
-    //public XArticle Update(XArticle pValue)
-    //{
-    //    if (!Delete(pValue.ID))
-    //        return null;
-    //    _Articles.Add(pValue);
-    //    return pValue;
-    //}
-
     public async Task<Domain.Entities.Chamados> AtualizarAsync(Domain.Entities.Chamados chamado)
     {
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            Domain.Entities.Chamados c = _Chamados.FirstOrDefault(o => o.ObjectID == chamado.ObjectID);
+            Domain.Entities.Chamados c = _Chamados.FirstOrDefault(o => o.Id == chamado.Id);
             return c;
         });
     }
@@ -84,6 +46,7 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
+            chamado.Id = Guid.NewGuid().ToString();
             _Chamados.Add(chamado);
             return chamado;
         });
@@ -94,7 +57,7 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            return _Chamados.FirstOrDefault(o => o.ObjectID == id);
+            return _Chamados.FirstOrDefault(o => o.Id == id);
         });
     }
 
@@ -107,14 +70,14 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         });
     }
 
-    public async Task<long> PegarQuantidadeAsync(bool apenasAbertos)
+    public async Task<long> PegarQuantidadeAsync(bool retornarChamadosFechados)
     {
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            if (apenasAbertos)
-                return Convert.ToInt64(_Chamados.Count(o => o.Aberto));
-            return Convert.ToInt64(_Chamados.Count);
+            if (retornarChamadosFechados)
+                return Convert.ToInt64(_Chamados.Count);
+            return Convert.ToInt64(_Chamados.Count(o => o.Aberto));
         });
     }
 }

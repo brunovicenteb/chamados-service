@@ -2,7 +2,7 @@
 
 public interface IChamadosServico
 {
-    Task<long> PegarQuantidadeAsync(bool apenasAbertos);
+    Task<long> PegarQuantidadeAsync(bool retornarChamadosFechados);
 
     Task<IEnumerable<Entities.Chamados>> PegarChamadosAsync(int? inicio, int? limite);
 

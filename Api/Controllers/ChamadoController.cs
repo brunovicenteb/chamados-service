@@ -17,9 +17,9 @@ public class ChamadoController : ManagedController
     [HttpGet("contador")]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PegarQuantidade(bool apenasAbertos)
+    public async Task<IActionResult> PegarQuantidade(bool retornarChamadosFechados)
     {
-        return await TryExecuteOK(async () => await _ChamadoServico.PegarQuantidadeAsync(apenasAbertos));
+        return await TryExecuteOK(async () => await _ChamadoServico.PegarQuantidadeAsync(retornarChamadosFechados));
     }
 
     /// <summary>Retorna os chamados com possiblidade de paginação.</summary>
@@ -69,7 +69,7 @@ public class ChamadoController : ManagedController
         Func<object, IActionResult> action = delegate (object result)
         {
             Domain.Entities.Chamados c = result as Domain.Entities.Chamados;
-            return CreatedAtAction(nameof(PegarChamadoPorId).ToLower(), new { id = c.ObjectID }, result);
+            return CreatedAtAction(nameof(PegarChamadoPorId).ToLower(), new { id = c.Id }, result);
         };
         return await TryExecute(action, execute);
     }

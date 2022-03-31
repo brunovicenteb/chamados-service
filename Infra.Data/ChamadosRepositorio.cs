@@ -18,16 +18,16 @@ public class ChamadosRepositorio : IChamadosRepositorio
         _Chamados = database.GetCollection<Domain.Entities.Chamados>("Chamados");
     }
 
-    public async Task<long> PegarQuantidadeAsync(bool apenasAbertos)
+    public async Task<long> PegarQuantidadeAsync(bool retornarChamadosFechados)
     {
-        if (apenasAbertos)
-            return await _Chamados.CountDocumentsAsync(o => o.Aberto == apenasAbertos);
-        return await _Chamados.CountDocumentsAsync(o => true);
+        if (retornarChamadosFechados)
+            return await _Chamados.CountDocumentsAsync(o => true);
+        return await _Chamados.CountDocumentsAsync(o => o.Aberto);
     }
 
     public async Task<Domain.Entities.Chamados> PegarChamadoPorIdAsync(string id)
     {
-        return await _Chamados.Find(o => o.ObjectID == id).FirstOrDefaultAsync();
+        return await _Chamados.Find(o => o.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Domain.Entities.Chamados>> PegarChamadosAsync(int pInicio, int pLimite)
@@ -40,15 +40,15 @@ public class ChamadosRepositorio : IChamadosRepositorio
     public async Task<Domain.Entities.Chamados> InserirAsync(Domain.Entities.Chamados chamado)
     {
         await _Chamados.InsertOneAsync(chamado);
-        return await PegarChamadoPorIdAsync(chamado.ObjectID);
+        return await PegarChamadoPorIdAsync(chamado.Id);
     }
 
     public async Task<Domain.Entities.Chamados> AtualizarAsync(Domain.Entities.Chamados chamado)
     {
         var updateResult = await _Chamados.ReplaceOneAsync(
-            o => o.ObjectID == chamado.ObjectID, replacement: chamado);
+            o => o.Id == chamado.Id, replacement: chamado);
         if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
             throw new BadRequestException("Não foi possível atualizar o chamado.");
-        return await PegarChamadoPorIdAsync(chamado.ObjectID);
+        return await PegarChamadoPorIdAsync(chamado.Id);
     }
 }
