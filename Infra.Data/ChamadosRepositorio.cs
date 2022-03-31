@@ -30,9 +30,10 @@ public class ChamadosRepositorio : IChamadosRepositorio
         return await _Chamados.Find(o => o.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Domain.Entities.Chamados>> PegarChamadosAsync(int pInicio, int pLimite)
+    public async Task<IList<Domain.Entities.Chamados>> PegarChamadosAsync(int pInicio, int pLimite)
     {
         return await _Chamados.Find(FilterDefinition<Domain.Entities.Chamados>.Empty)
+            .SortBy(o => o.DataHoraCriacao)
             .Skip(pInicio)
             .Limit(pLimite).ToListAsync();
     }

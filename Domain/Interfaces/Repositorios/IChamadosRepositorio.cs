@@ -5,7 +5,7 @@ public interface IChamadosRepositorio
 
     Task<long> PegarQuantidadeAsync(bool retornarChamadosFechados);
 
-    Task<IEnumerable<Entities.Chamados>> PegarChamadosAsync(int inicio, int limite);
+    Task<IList<Entities.Chamados>> PegarChamadosAsync(int inicio, int limite);
 
     Task<Entities.Chamados> PegarChamadoPorIdAsync(string id);
 

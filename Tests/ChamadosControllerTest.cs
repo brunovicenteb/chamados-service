@@ -1,12 +1,13 @@
+using System;
 using NUnit.Framework;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Chamados.Service.Tests.Mock;
 using Chamados.Service.Application;
 using Chamados.Service.Domain.Enums;
 using Chamados.Service.Api.Controllers;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
-using System;
 
 namespace Chamados.Service.Tests;
 public class ArticleControllerTest
@@ -17,18 +18,18 @@ public class ArticleControllerTest
     public void TestaPegarQuantidade()
     {
         ChamadoController c = CriarController(true);
-        IActionResult result = c.PegarQuantidade(false).Result;
-        long longResult = AfirmarOk<long>(result, 4);
-        Assert.AreEqual(longResult, 4);
+        IActionResult result = c.PegarQuantidade(true).Result;
+        long longResult = AfirmarOk<long>(result, 20);
+        Assert.AreEqual(longResult, 20);
     }
 
     [Test]
-    public void TestaPegarQuantidadeIncluindoChamadosFechados()
+    public void TestaPegarQuantidadeSemChamadosFechados()
     {
         ChamadoController c = CriarController(true);
-        IActionResult result = c.PegarQuantidade(true).Result;
-        long longResult = AfirmarOk<long>(result, 5);
-        Assert.AreEqual(longResult, 5);
+        IActionResult result = c.PegarQuantidade(false).Result;
+        long longResult = AfirmarOk<long>(result, 16);
+        Assert.AreEqual(16, longResult);
     }
 
     [Test]
@@ -92,32 +93,31 @@ public class ArticleControllerTest
         AfirmarBadRequest(resultado, "Não é possível inserir um chamado que já possui identificador.");
     }
 
-    //[Test]
-    //public void TestEndpointCreateArticleWithID()
-    //{
-    //    //XArticle a = CreateArticle(15788745);
-    //    //Assert.AreEqual(15788745, a.ID);
-    //}
+    [Test]
+    public void TestarPegarChamadosComPaginacao()
+    {
+        // O carregamento de dados cria 20 chamados no mock.
+        ChamadoController c = CriarController(true);
+        var resultado = c.PegarChamados(null, null).Result; // Valor padrão de 10 por página.
+        var chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        Assert.AreEqual(10, chamados.Count);
 
-    //[Test]
-    //public void TestEndpointCreateArticleWithErrors()
-    //{
-    //    //ArticleController c = CreateController();
-    //    //IActionResult result = c.Articles(null);
-    //    //AssertError(result, "Invalid Article.");
+        resultado = c.PegarChamados(null, 50).Result;
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        Assert.AreEqual(20, chamados.Count);
 
-    //    //XArticle a = CreateArticleObject(5789654, null, null, null);
-    //    //result = c.Articles(a);
-    //    //AssertError(result, $"Title not informed.{Environment.NewLine}Url not informed.{Environment.NewLine}ImageUrl not informed.");
+        resultado = c.PegarChamados(5, 50).Result;
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        Assert.AreEqual(15, chamados.Count);
 
-    //    //a.Title = "Starlink Mission";
-    //    //result = c.Articles(a);
-    //    //AssertError(result, $"Url not informed.{Environment.NewLine}ImageUrl not informed.");
+        resultado = c.PegarChamados(15, null).Result;
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        Assert.AreEqual(5, chamados.Count);
 
-    //    //a.Url = "This is a Url content";
-    //    //result = c.Articles(a);
-    //    //AssertError(result, $"ImageUrl not informed.");
-    //}
+        resultado = c.PegarChamados(20, null).Result;
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        Assert.AreEqual(0, chamados.Count);
+    }
 
     //[Test]
     //public void TestEndpointUpdateArticle()
@@ -171,60 +171,6 @@ public class ArticleControllerTest
     //    //a.Url = "This is a Url content";
     //    //result = c.ArticlesPut(4067, a);
     //    //AssertError(result, $"ImageUrl not informed.");
-    //}
-
-    //[Test]
-    //public void TestEndpointGetArticleByID()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Articles(4067);
-    //    //Assert.IsInstanceOf<OkObjectResult>(result);
-    //    //OkObjectResult okResult = (OkObjectResult)result;
-    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
-    //    //XArticle a = (XArticle)okResult.Value;
-    //    //AssertStarlinkMission(a);
-    //}
-
-    //[Test]
-    //public void TestEndpointGetArticleByIDError()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Articles(989857457);
-    //    //AssertNotFoundError(result, "Article 989857457 not found.");
-    //}
-
-    //[Test]
-    //public void TestEndpointSearchArticleEmpty()
-    //{
-    //    //ArticleController c = CreateController();
-    //    //IActionResult result = c.Articles();
-    //    //Assert.IsInstanceOf<OkObjectResult>(result);
-    //    //OkObjectResult okResult = (OkObjectResult)result;
-    //    //Assert.IsInstanceOf<IEnumerable<XArticle>>(okResult.Value);
-    //    //IEnumerable<XArticle> enm = (IEnumerable<XArticle>)okResult.Value;
-    //    //XArticle[] resultArticles = enm.ToArray();
-    //    //Assert.AreEqual(0, resultArticles.Length);
-    //}
-
-    //[Test]
-    //public void TestEndpointSearchPaginatedArticles()
-    //{
-    //    //// Testa paginação retornando o valor limite padrão de 10 artigos
-    //    //ArticleController c = AssertSearchPaginatedArticles(null, null, 10);
-
-    //    //// Testar pular mais do que o total de 5 em 5 artigos
-    //    //AssertSearchPaginatedArticles(16, null, 0);
-
-    //    //// Testar paginação de 5 em 5 artigos
-    //    //AssertSearchPaginatedArticles(null, 5, 5);
-    //    //AssertSearchPaginatedArticles(5, 5, 5);
-    //    //AssertSearchPaginatedArticles(10, 5, 5);
-    //    //AssertSearchPaginatedArticles(15, 5, 0);
-
-    //    //// Testar paginação de 10 em 10 artigos
-    //    //AssertSearchPaginatedArticles(null, 10, 10);
-    //    //AssertSearchPaginatedArticles(10, 10, 5);
-    //    //AssertSearchPaginatedArticles(15, 5, 0);
     //}
 
     //[Test]

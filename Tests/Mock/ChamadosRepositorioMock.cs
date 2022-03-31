@@ -61,12 +61,15 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         });
     }
 
-    public async Task<IEnumerable<Domain.Entities.Chamados>> PegarChamadosAsync(int inicio, int limite)
+    public async Task<IList<Domain.Entities.Chamados>> PegarChamadosAsync(int inicio, int limite)
     {
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            return _Chamados.Skip(inicio).Take(limite);
+            return _Chamados
+                .OrderBy(o => o.DataHoraCriacao)
+                .Skip(inicio)
+                .Take(limite).ToList();
         });
     }
 
