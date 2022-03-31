@@ -1,5 +1,5 @@
 ﻿using MongoDB.Bson;
-using Chamados.Service.Domain.Enum;
+using Chamados.Service.Domain.Enums;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -9,7 +9,6 @@ namespace Chamados.Service.Domain.Entities;
 public class Chamados
 {
     [BsonId]
-    [JsonIgnore]
     [BsonRepresentation(BsonType.ObjectId)]
     public string ObjectID
     {

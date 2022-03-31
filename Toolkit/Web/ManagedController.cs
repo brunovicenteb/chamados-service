@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Chamados.Service.Toolkit.Exceptions;
+using Serilog;
 
 namespace Chamados.Service.Toolkit.Web;
 
 public abstract class ManagedController : ControllerBase
 {
+    private const int _InternalServerError = 500;
+
     protected async Task<IActionResult> TryExecuteOK(Func<Task<object>> pExecute)
     {
         Func<object, IActionResult> action = delegate (object result)
@@ -46,6 +49,11 @@ public abstract class ManagedController : ControllerBase
         catch (BadRequestException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Log.Logger.Error(ex, "Erro não tratado na execução do Api.");
+            return StatusCode(_InternalServerError);
         }
     }
 }

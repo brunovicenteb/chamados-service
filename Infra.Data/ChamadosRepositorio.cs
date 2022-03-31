@@ -50,7 +50,7 @@ public class ChamadosRepositorio : IChamadosRepositorio
         if (string.IsNullOrEmpty(chamado.ObjectID))
             throw new BadRequestException("Não é possível atualizar um chamado sem identificador.");
         Domain.Entities.Chamados c = await PegarChamadoPorIdAsync(chamado.ObjectID);
-        if (c != null)
+        if (c == null)
             throw new BadRequestException("Nenhum chamado foi encontrado com esse identificador.");
         var updateResult = await _Chamados.ReplaceOneAsync(
             o => o.ObjectID == c.ObjectID, replacement: chamado);
