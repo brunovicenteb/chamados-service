@@ -21,13 +21,13 @@ Uma versão desse mesmo em execução está [disponível](https://coodesh-backen
   <tr>
     <td><img align="center" alt="Rafa-Csharp" height="30" width="40" src="https://icongr.am/devicon/dot-net-original.svg?size=40"></td>
     <td>.Net Core</td>
-    <td>5.0</td>
+    <td>6.0</td>
     <td><a href="https://serilog.net">Serilog</a>, <a href="https://nunit.org">NUnit</a>, <a href="https://fluentvalidation.net">FluentValidation</a></td>
   </tr>
   <tr>
     <td><img align="center" alt="Rafa-Csharp" height="30" width="40" src="https://icongr.am/devicon/csharp-original.svg?size=40"></td>
     <td>C#</td>
-    <td>8.0</td>
+    <td>9.0</td>
     <td></td>
   </tr>    
   <tr>
@@ -47,12 +47,6 @@ Uma versão desse mesmo em execução está [disponível](https://coodesh-backen
     <td>Docker</td>
     <td>lasted</td>
     <td><a href="https://hub.docker.com/editions/community/docker-ce-desktop-windows">Docker Desktop for Windows</a></td>    
-  </tr>
-  <tr>
-    <td><img align="center" alt="Rafa-Csharp" height="30" width="40" src="https://icongr.am/devicon/redis-original-wordmark.svg?size=40"></td>
-    <td>Redis</td>
-    <td>lasted</td>
-    <td></td>    
   </tr>
   <tr>
     <td><img align="center" alt="Rafa-Csharp" height="30" width="40" src="https://icongr.am/devicon/git-original.svg?size=40"></td>
