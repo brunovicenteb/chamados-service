@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Chamados.Service.Toolkit.Exceptions;
 using Serilog;
+using Chamados.Service.Toolkit.Excecoes;
 
 namespace Chamados.Service.Toolkit.Web;
 

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
+using Chamados.Service.Toolkit.Excecoes;
 using Chamados.Service.Domain.Interfaces.Repositorios;
-using Chamados.Service.Toolkit.Exceptions;
 
 namespace Chamados.Service.Infra.Data;
 

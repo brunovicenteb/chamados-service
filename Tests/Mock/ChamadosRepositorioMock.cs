@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AutoMapper;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Reflection;
@@ -7,7 +8,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Chamados.Service.Domain.Interfaces.Repositorios;
-using AutoMapper;
 
 namespace Chamados.Service.Tests.Mock;
 
@@ -30,7 +30,7 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
             return;
         Assembly assembly = Assembly.GetExecutingAssembly();
         var resourcePath = string.Format("{0}.{1}", Regex.Replace(assembly.ManifestModule.Name, @"\.(exe|dll)$",
-          string.Empty, RegexOptions.IgnoreCase), "Resources.ChamadosData.json");
+          string.Empty, RegexOptions.IgnoreCase), "Recursos.ChamadosData.json");
         using (Stream stream = assembly.GetManifestResourceStream(resourcePath))
         {
             using (StreamReader reader = new StreamReader(stream))

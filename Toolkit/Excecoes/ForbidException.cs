@@ -1,4 +1,4 @@
-﻿namespace Chamados.Service.Toolkit.Exceptions;
+﻿namespace Chamados.Service.Toolkit.Excecoes;
 
 public sealed class ForbidException : BaseException
 {

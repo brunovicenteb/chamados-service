@@ -1,4 +1,4 @@
-﻿using Chamados.Service.Toolkit.Exceptions;
+﻿using Chamados.Service.Toolkit.Excecoes;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
 

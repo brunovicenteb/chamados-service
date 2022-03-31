@@ -21,6 +21,9 @@ public static class InicializacaoDeChamados
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             opt.IncludeXmlComments(xmlPath);
+            xmlFile = $"Chamados.Service.Domain.xml";
+            xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            opt.IncludeXmlComments(xmlPath);
         });
         RegistraServico(servico);
     }
@@ -33,19 +36,19 @@ public static class InicializacaoDeChamados
     public static void ConfiguraChamados(this IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoodeshAPI v1"));
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Chamados-Service v1"));
     }
 
     private static OpenApiInfo CriaInformacoesDaApi()
     {
         return new OpenApiInfo
         {
-            Title = "Coodesh Back-end Challenge API",
+            Title = "Chamados-Service API",
             Version = "v1",
-            Description = "This is a REST API that will use data from the Space Flight News project, " +
-                   "a public API with information related to spaceflight. " +
-                   "The project was created so that Coodesh has practical conditions to assess the skills " +
-                   "of candidate Bruno Belchior for the vacancy of Back-end Developer.",
+            Description = "Essa é uma Api de fins didáticos, criada para controle de chamados de suporte de uma empresa fictícia. " +
+                   "Seu intuito é apresentar uma visão clara de um projeto desenvolvido " +
+                   "utilizando as práticas de Clean Architecture e servir como exemplo de consulta  " +
+                   "para novos projetos similares.",
             Contact = new OpenApiContact
             {
                 Name = "Bruno Belchior",
