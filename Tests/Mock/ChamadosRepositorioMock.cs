@@ -7,12 +7,22 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Chamados.Service.Domain.Interfaces.Repositorios;
+using AutoMapper;
 
 namespace Chamados.Service.Tests.Mock;
 
 public class ChamadosRepositorioMock : IChamadosRepositorio
 {
-    private readonly List<Domain.Entities.Chamados> _Chamados = new List<Domain.Entities.Chamados>();
+    static ChamadosRepositorioMock()
+    {
+        var configuration = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Domain.Entities.Chamados, Domain.Entities.Chamados>();
+        });
+        _Mapper = new Mapper(configuration);
+    }
+
+    private static readonly Mapper _Mapper;
 
     public ChamadosRepositorioMock(bool pLoadData)
     {
@@ -31,13 +41,16 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         }
     }
 
+    private readonly List<Domain.Entities.Chamados> _Chamados = new List<Domain.Entities.Chamados>();
+
     public async Task<Domain.Entities.Chamados> AtualizarAsync(Domain.Entities.Chamados chamado)
     {
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
             Domain.Entities.Chamados c = _Chamados.FirstOrDefault(o => o.Id == chamado.Id);
-            return c;
+            _Mapper.Map(chamado, c);
+            return _Chamados.FirstOrDefault(o => o.Id == chamado.Id);
         });
     }
 
@@ -47,6 +60,7 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         {
             await Console.Out.WriteAsync(string.Empty);
             chamado.Id = Guid.NewGuid().ToString();
+            chamado = Clonar(chamado);
             _Chamados.Add(chamado);
             return chamado;
         });
@@ -57,7 +71,7 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            return _Chamados.FirstOrDefault(o => o.Id == id);
+            return Clonar(_Chamados.FirstOrDefault(o => o.Id == id));
         });
     }
 
@@ -69,7 +83,9 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
             return _Chamados
                 .OrderBy(o => o.DataHoraCriacao)
                 .Skip(inicio)
-                .Take(limite).ToList();
+                .Take(limite)
+                .Select(o => Clonar(o))
+                .ToList();
         });
     }
 
@@ -82,5 +98,12 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
                 return Convert.ToInt64(_Chamados.Count);
             return Convert.ToInt64(_Chamados.Count(o => o.Aberto));
         });
+    }
+
+    private Domain.Entities.Chamados Clonar(Domain.Entities.Chamados chamado)
+    {
+        if (chamado == null)
+            return null;
+        return _Mapper.Map<Domain.Entities.Chamados>(chamado);
     }
 }

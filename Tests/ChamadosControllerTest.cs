@@ -117,7 +117,7 @@ public class ArticleControllerTest
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 20);
 
-        var chamadoAtualizado = CriarChamado(_HermioneGrangerId, "Resultado de Testes Atualizados", "Hermione Granger", Gravidade.Bloqueador, "23257183283",
+        var chamadoAtualizado = CriarChamado(_HermioneGrangerId, "Hermione Granger", "Resultado de Testes Atualizados", Gravidade.Bloqueador, "23257183283",
             "hermione.granger@gmail.com", "Aguardo resultados de testes atualizados.");
         var resultadoChamadoAtualizado = c.Atualizar(chamadoAtualizado).Result;
         chamadoAtualizado = AfirmarOk<Domain.Entities.Chamados>(resultadoChamadoAtualizado);
