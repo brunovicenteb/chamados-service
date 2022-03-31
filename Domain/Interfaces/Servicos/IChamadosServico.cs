@@ -11,4 +11,6 @@ public interface IChamadosServico
     Task<Entities.Chamados> InserirAsync(Entities.Chamados chamado);
 
     Task<Entities.Chamados> AtualizarAsync(Entities.Chamados chamado);
+
+    Task<bool> ExlcuirAsync(string id);
 }

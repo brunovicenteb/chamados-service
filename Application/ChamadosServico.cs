@@ -51,4 +51,14 @@ public class ChamadosServico : IChamadosServico
             throw new BadRequestException("Não é possível inserir um chamado que já possui identificador.");
         return await _Repositorio.InserirAsync(chamado);
     }
+
+    public async Task<bool> ExlcuirAsync(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+            throw new BadRequestException("Não é possível excluir um chamado sem um identificador.");
+        Domain.Entities.Chamados c = await _Repositorio.PegarChamadoPorIdAsync(id);
+        if (c == null)
+            throw new NotFoundException("Não foi possível excluir o chamado com o identificador informado.");
+        return await _Repositorio.ExcluirAsync(id);
+    }
 }

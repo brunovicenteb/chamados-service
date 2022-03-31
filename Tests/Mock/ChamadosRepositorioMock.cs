@@ -66,6 +66,18 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         });
     }
 
+    public async Task<bool> ExcluirAsync(string id)
+    {
+        return await Task.Run(async () =>
+        {
+            await Console.Out.WriteAsync(string.Empty);
+            Domain.Entities.Chamados c = _Chamados.FirstOrDefault(o => o.Id == id);
+            if (c == null)
+                return false;
+            return _Chamados.Remove(c);
+        });
+    }
+
     public async Task<Domain.Entities.Chamados> PegarChamadoPorIdAsync(string id)
     {
         return await Task.Run(async () =>

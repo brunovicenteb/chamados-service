@@ -152,6 +152,38 @@ public class ArticleControllerTest
     }
 
     [Test]
+    public void TestaExcluirChamado()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultQuantidade = c.PegarQuantidade(true).Result;
+        long longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 20);
+
+        IActionResult resultado = c.Excluir(_JamesCameronId).Result;
+        Assert.IsInstanceOf<NoContentResult>(resultado);
+
+        resultQuantidade = c.PegarQuantidade(true).Result;
+        longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 19);
+    }
+
+    [Test]
+    public void TestaExcluirChamadoSemIdPreenchido()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.Excluir(string.Empty).Result;
+        AfirmarBadRequest(resultado, "Não é possível excluir um chamado sem um identificador.");
+    }
+
+    [Test]
+    public void TestaExcluirChamadoComIdInexistente()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.Excluir(Guid.NewGuid().ToString()).Result;
+        AfirmarNotFound(resultado, "Não foi possível excluir o chamado com o identificador informado.");
+    }
+
+    [Test]
     public void TestarPegarChamadosComPaginacao()
     {
         // O carregamento de dados cria 20 chamados no mock.
@@ -177,123 +209,12 @@ public class ArticleControllerTest
         Assert.AreEqual(0, chamados.Count);
     }
 
-    //[Test]
-    //public void TestEndpointUpdateArticle()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Count();
-    //    //long longResult = AssertOk<long>(result, 15);
-
-    //    //result = c.Articles(4067); // Starlink Mission
-    //    //Assert.IsInstanceOf<OkObjectResult>(result);
-    //    //OkObjectResult okResult = (OkObjectResult)result;
-    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
-    //    //XArticle a = (XArticle)okResult.Value;
-    //    //a.Title = a.Title += " [Updated]";
-    //    //c.ArticlesPut(4067, a);
-    //    //AssertStarlinkMission(a, "Starlink Mission [Updated]");
-
-    //    //result = c.Count();
-    //    //AssertOk<long>(result, longResult);
-    //}
-
-    //[Test]
-    //public void TestEndpointUpdateArticleErrors()
-    //{
-    //    //var configuration = new MapperConfiguration(cfg =>
-    //    //{
-    //    //    cfg.CreateMap<XArticle, XArticle>();
-    //    //});
-    //    //Mapper m = new Mapper(configuration);
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.ArticlesPut(4067, null);
-    //    //AssertError(result, "Invalid Article.");
-
-    //    //result = c.Articles(4067); // Starlink Mission
-    //    //Assert.IsInstanceOf<OkObjectResult>(result);
-    //    //OkObjectResult okResult = (OkObjectResult)result;
-    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
-    //    //XArticle a = m.Map<XArticle>(okResult.Value);
-
-    //    //result = c.ArticlesPut(154787985, a);
-    //    //AssertNotFoundError(result, "Article 154787985 not found.");
-
-    //    //a.Title = a.Url = a.ImageUrl = string.Empty;
-    //    //result = c.ArticlesPut(4067, a);
-    //    //AssertError(result, $"Title not informed.{Environment.NewLine}Url not informed.{Environment.NewLine}ImageUrl not informed.");
-
-    //    //a.Title = "Starlink Mission";
-    //    //result = c.ArticlesPut(4067, a);
-    //    //AssertError(result, $"Url not informed.{Environment.NewLine}ImageUrl not informed.");
-
-    //    //a.Url = "This is a Url content";
-    //    //result = c.ArticlesPut(4067, a);
-    //    //AssertError(result, $"ImageUrl not informed.");
-    //}
-
-    //[Test]
-    //public void TestEndpointArticlesDeleteTrue()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Count();
-    //    //long longResult = AssertOk<long>(result, 15);
-
-    //    //result = c.ArticlesDelete(4067);
-    //    //Assert.IsInstanceOf<NoContentResult>(result);
-
-    //    //result = c.Count();
-    //    //AssertOk<long>(result, longResult - 1);
-    //}
-
-    //[Test]
-    //public void TestEndpointArticlesDeleteFalse()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Count();
-    //    //long longResult = AssertOk<long>(result, 15);
-
-    //    //result = c.ArticlesDelete(157849);
-    //    //Assert.IsInstanceOf<NotFoundResult>(result);
-
-    //    //result = c.Count();
-    //    //AssertOk<long>(result, 15);
-    //}
-
-    //private long GetCount(ArticleController pController)
-    //{
-    //    IActionResult result = pController.Count();
-    //    OkObjectResult okResult = (OkObjectResult)result;
-    //    return (long)okResult.Value;
-    //}
-
     private ChamadoController CriarController(bool pLoadData = false)
     {
         IChamadosRepositorio mock = new ChamadosRepositorioMock(pLoadData);
         IChamadosServico servico = new ChamadosServico(mock);
         return new ChamadoController(servico);
     }
-
-    //public ArticleController AssertSearchPaginatedArticles(int? pStart, int? pLimit, int pAmount, ArticleController pController = null)
-    //{
-    //    ArticleController c = pController ?? CreateController(true); // Alimenta 15 artigos.
-    //    IActionResult result = c.Articles(pLimit, pStart);
-
-    //    Assert.IsInstanceOf<OkObjectResult>(result);
-    //    OkObjectResult okResult = (OkObjectResult)result;
-    //    Assert.IsInstanceOf<IEnumerable<XArticle>>(okResult.Value);
-    //    IEnumerable<XArticle> enm = (IEnumerable<XArticle>)okResult.Value;
-    //    XArticle[] resultArticles = enm.ToArray();
-    //    Assert.AreEqual(pAmount, resultArticles.Length);
-    //    return c;
-    //}
-
-    //private void AssertNotFoundError(IActionResult pResult, string pMessage)
-    //{
-    //    Assert.IsInstanceOf<NotFoundObjectResult>(pResult);
-    //    NotFoundObjectResult errorResult = (NotFoundObjectResult)pResult;
-    //    Assert.IsInstanceOf<string>(errorResult.Value);
-    //    Assert.AreEqual(pMessage, errorResult.Value);
-    //}
 
     private void AfirmarNotFound(IActionResult resultado, string mensagem)
     {
@@ -327,21 +248,6 @@ public class ArticleControllerTest
         return (T)resultadoOkCriado.Value;
     }
 
-    //private void AssertStarlinkMission(XArticle pArticle, string pTitle = "Starlink Mission")
-    //{
-    //    Assert.AreEqual(4067, pArticle.ID);
-    //    Assert.AreEqual(false, pArticle.Featured);
-    //    Assert.AreEqual(pTitle, pArticle.Title);
-    //    Assert.AreEqual("https://www.spacex.com/news/2020/01/07/starlink-mission", pArticle.Url);
-    //    Assert.AreEqual("https://www.spacex.com/sites/spacex/files/styles/featured_news_widget_image/public/field/image/starlink_2_outtower_website.jpg?itok=-i8nhHqy", pArticle.ImageUrl);
-    //    Assert.AreEqual("SpaceX", pArticle.NewsSite);
-    //    Assert.AreEqual(string.Empty, pArticle.Summary);
-    //    Assert.AreEqual("2020-01-07T00:00:00.000Z", pArticle.PublishedAt);
-    //    Assert.AreEqual("2021-05-18T13:45:49.196Z", pArticle.UpdatedAt);
-    //    Assert.AreEqual(0, pArticle.Launches.Length);
-    //    Assert.AreEqual(0, pArticle.Events.Length);
-    //}
-
     private Domain.Entities.Chamados CriarChamado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
     {
         var c = new Domain.Entities.Chamados();
@@ -355,30 +261,4 @@ public class ArticleControllerTest
         c.Descricao = descricao;
         return c;
     }
-
-    //private XArticle CreateArticle(int? pID, string pTitle = "James Webb reach lagrange point 2", string pUrl = "This is a Url content", string pImageUrl = "This is a ImageUrl content")
-    //{
-    //    ArticleController c = CreateController();
-    //    long count = GetCount(c);
-
-    //    XArticle a = CreateArticleObject(pID, pTitle, pUrl, pImageUrl);
-
-    //    IActionResult result = c.Articles(a);
-    //    XArticle newArticle = AssertOkCreated<XArticle>(result, a);
-    //    CreatedAtActionResult resultCreated = (CreatedAtActionResult)result;
-    //    Assert.AreEqual("articles", resultCreated.ActionName);
-    //    Assert.AreEqual(1, resultCreated.RouteValues.Count);
-    //    Assert.AreEqual("id", resultCreated.RouteValues.First().Key);
-    //    Assert.AreEqual(a.ID, resultCreated.RouteValues.First().Value);
-    //    Assert.IsFalse(newArticle.Featured);
-    //    Assert.IsTrue(string.IsNullOrEmpty(a.ObjectID));
-    //    Assert.AreSame(a, newArticle);
-    //    Assert.AreEqual(pTitle, newArticle.Title);
-    //    Assert.AreEqual("On 24 January, 30 days after launch on Christmas Day, the James Webb Space Telescope...", newArticle.Summary);
-    //    Assert.AreEqual(pUrl, newArticle.Url);
-    //    Assert.AreEqual(pImageUrl, newArticle.ImageUrl);
-    //    long newCount = GetCount(c);
-    //    Assert.AreEqual(count + 1, newCount);
-    //    return newArticle;
-    //}
 }

@@ -45,7 +45,17 @@ public class ChamadoController : ManagedController
         return await TryExecuteOK(async () => await _ChamadoServico.PegarChamadoPorIdAsync(id));
     }
 
-    /// <summary>Atualizar novo chamado existente</summary>
+    /// <summary>Excluir um chamado existente</summary>
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Excluir(string id)
+    {
+        return await TryExecuteDelete(async () => await _ChamadoServico.ExlcuirAsync(id));
+    }
+
+    /// <summary>Atualizar um chamado existente</summary>
     [HttpPut]
     [ProducesResponseType(typeof(Domain.Entities.Chamados), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -55,7 +65,7 @@ public class ChamadoController : ManagedController
         return await TryExecuteOK(async () => await _ChamadoServico.AtualizarAsync(chamado));
     }
 
-    /// <summary>Salva um novo chamado</summary>
+    /// <summary>Criar um novo chamado</summary>
     [HttpPost]
     [ProducesResponseType(typeof(Domain.Entities.Chamados), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

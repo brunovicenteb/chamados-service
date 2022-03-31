@@ -12,4 +12,6 @@ public interface IChamadosRepositorio
     Task<Entities.Chamados> InserirAsync(Entities.Chamados chamado);
 
     Task<Entities.Chamados> AtualizarAsync(Entities.Chamados chamado);
+
+    Task<bool> ExcluirAsync(string id);
 }
