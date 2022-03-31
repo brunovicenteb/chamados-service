@@ -1,5 +1,6 @@
-﻿using Chamados.Service.Domain.Interfaces.Repositorios;
+﻿using Chamados.Service.Toolkit.Exceptions;
 using Chamados.Service.Domain.Interfaces.Servicos;
+using Chamados.Service.Domain.Interfaces.Repositorios;
 
 namespace Chamados.Service.Application;
 
@@ -14,6 +15,9 @@ public class ChamadosServico : IChamadosServico
 
     public async Task<Domain.Entities.Chamados> PegarChamadoPorIdAsync(string id)
     {
+        Domain.Entities.Chamados c = await _Repositorio.PegarChamadoPorIdAsync(id);
+        if (c == null)
+            throw new NotFoundException("Não foi possível encontrar o chamado com o identificador informado.");
         return await _Repositorio.PegarChamadoPorIdAsync(id);
     }
 
@@ -31,11 +35,18 @@ public class ChamadosServico : IChamadosServico
 
     public async Task<Domain.Entities.Chamados> AtualizarAsync(Domain.Entities.Chamados chamado)
     {
+        if (string.IsNullOrEmpty(chamado.ObjectID))
+            throw new BadRequestException("Não é possível atualizar um chamado sem identificador.");
+        Domain.Entities.Chamados c = await _Repositorio.PegarChamadoPorIdAsync(chamado.ObjectID);
+        if (c == null)
+            throw new BadRequestException("Nenhum chamado foi encontrado com esse identificador.");
         return await _Repositorio.AtualizarAsync(chamado);
     }
 
     public async Task<Domain.Entities.Chamados> InserirAsync(Domain.Entities.Chamados chamado)
     {
+        if (!string.IsNullOrEmpty(chamado.ObjectID))
+            throw new BadRequestException("Não é possível inserir um chamado que já possui identificador.");
         return await _Repositorio.InserirAsync(chamado);
     }
 }
