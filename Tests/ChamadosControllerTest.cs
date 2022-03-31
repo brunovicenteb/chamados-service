@@ -13,13 +13,14 @@ namespace Chamados.Service.Tests;
 public class ArticleControllerTest
 {
     private const string _JamesCameronId = "6244c7ea757c678abca6716d";
+    private const string _HermioneGrangerId = "6244c826eb6aeb6c5f44b0d0";
 
     [Test]
     public void TestaPegarQuantidade()
     {
         ChamadoController c = CriarController(true);
         IActionResult result = c.PegarQuantidade(true).Result;
-        long longResult = AfirmarOk<long>(result, 20);
+        long longResult = AfirmarOk<long>(result);
         Assert.AreEqual(longResult, 20);
     }
 
@@ -28,7 +29,7 @@ public class ArticleControllerTest
     {
         ChamadoController c = CriarController(true);
         IActionResult result = c.PegarQuantidade(false).Result;
-        long longResult = AfirmarOk<long>(result, 16);
+        long longResult = AfirmarOk<long>(result);
         Assert.AreEqual(16, longResult);
     }
 
@@ -37,7 +38,7 @@ public class ArticleControllerTest
     {
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.PegarChamadoPorId(_JamesCameronId).Result;
-        var chamado = AfirmarOk<Domain.Entities.Chamados>(resultado, c);
+        var chamado = AfirmarOk<Domain.Entities.Chamados>(resultado);
         Assert.IsFalse(string.IsNullOrEmpty(chamado.Id));
         Assert.IsFalse(chamado.Aberto);
         Assert.AreEqual("Limpesa das lentes", chamado.Assunto);
@@ -67,9 +68,13 @@ public class ArticleControllerTest
     [Test]
     public void TestaCriarChamado()
     {
+        ChamadoController c = CriarController(false);
+        IActionResult resultQuantidade = c.PegarQuantidade(true).Result;
+        long longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 0);
+
         var chamado = CriarChamado(string.Empty, "Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "39815683039",
             "maria.sharapova@gmail.com", "Preciso repor minha raquete de treinos com urgência.");
-        ChamadoController c = CriarController(false);
         IActionResult resultado = c.Inserir(chamado).Result;
         var resultadoChamado = AfirmarOkCriado<Domain.Entities.Chamados>(resultado, c);
         Assert.IsFalse(string.IsNullOrEmpty(resultadoChamado.Id));
@@ -80,12 +85,16 @@ public class ArticleControllerTest
         Assert.AreEqual("39815683039", resultadoChamado.CPF);
         Assert.AreEqual("maria.sharapova@gmail.com", resultadoChamado.Email);
         Assert.AreEqual("Preciso repor minha raquete de treinos com urgência.", resultadoChamado.Descricao);
+
+        resultQuantidade = c.PegarQuantidade(true).Result;
+        longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 1);
     }
 
     [Test]
     public void TestaCriarChamadoComIdPreenchido()
     {
-        //Criar objeto já existente dentro do Mock.
+        //Criar objeto com id que já existente dentro do Mock.
         var chamado = CriarChamado("6244c826eb6aeb6c5f44b0d0", "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
             "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
         ChamadoController c = CriarController(true);
@@ -94,119 +103,111 @@ public class ArticleControllerTest
     }
 
     [Test]
+    public void TestaAtualizarChamado()
+    {
+        ChamadoController c = CriarController(true);
+        var resultadoChamadoOriginal = c.PegarChamadoPorId(_HermioneGrangerId).Result;
+        var chamadoOriginal = AfirmarOk<Domain.Entities.Chamados>(resultadoChamadoOriginal);
+        Assert.AreEqual("Hermione Granger", chamadoOriginal.NomePessoa);
+        Assert.AreEqual("hermione.granger@gmail.com", chamadoOriginal.Email);
+        Assert.AreEqual("Resultado de Testes", chamadoOriginal.Assunto);
+        Assert.AreEqual("Aguardo resultados de testes.", chamadoOriginal.Descricao);
+
+        IActionResult resultQuantidade = c.PegarQuantidade(true).Result;
+        long longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 20);
+
+        var chamadoAtualizado = CriarChamado(_HermioneGrangerId, "Hermione Granger", "Resultado de Testes Atualizados", Gravidade.Bloqueador, "23257183283",
+            "hermione.granger@gmail.com", "Aguardo resultados de testes atualizados.");
+        var resultadoChamadoAtualizado = c.Atualizar(chamadoAtualizado).Result;
+        chamadoAtualizado = AfirmarOk<Domain.Entities.Chamados>(resultadoChamadoAtualizado);
+        Assert.AreEqual("Hermione Granger", chamadoAtualizado.NomePessoa);
+        Assert.AreEqual("hermione.granger@gmail.com", chamadoAtualizado.Email);
+        Assert.AreEqual("Resultado de Testes Atualizados", chamadoAtualizado.Assunto);
+        Assert.AreEqual("Aguardo resultados de testes atualizados.", chamadoAtualizado.Descricao);
+
+        resultQuantidade = c.PegarQuantidade(true).Result;
+        longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 20);
+    }
+
+    [Test]
+    public void TestaAtualizarChamadoSemIdPreenchido()
+    {
+        var chamado = CriarChamado(string.Empty, "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
+            "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.Atualizar(chamado).Result;
+        AfirmarBadRequest(resultado, "Não é possível atualizar um chamado sem um identificador.");
+    }
+
+    [Test]
+    public void TestaAtualizarChamadoComIdPreenchido()
+    {
+        var chamado = CriarChamado(Guid.NewGuid().ToString(), "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
+            "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.Atualizar(chamado).Result;
+        AfirmarNotFound(resultado, "Não foi possível atualizar o chamado com o identificador informado.");
+    }
+
+    [Test]
+    public void TestaExcluirChamado()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultQuantidade = c.PegarQuantidade(true).Result;
+        long longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 20);
+
+        IActionResult resultado = c.Excluir(_JamesCameronId).Result;
+        Assert.IsInstanceOf<NoContentResult>(resultado);
+
+        resultQuantidade = c.PegarQuantidade(true).Result;
+        longResult = AfirmarOk<long>(resultQuantidade);
+        Assert.AreEqual(longResult, 19);
+    }
+
+    [Test]
+    public void TestaExcluirChamadoSemIdPreenchido()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.Excluir(string.Empty).Result;
+        AfirmarBadRequest(resultado, "Não é possível excluir um chamado sem um identificador.");
+    }
+
+    [Test]
+    public void TestaExcluirChamadoComIdInexistente()
+    {
+        ChamadoController c = CriarController(true);
+        IActionResult resultado = c.Excluir(Guid.NewGuid().ToString()).Result;
+        AfirmarNotFound(resultado, "Não foi possível excluir o chamado com o identificador informado.");
+    }
+
+    [Test]
     public void TestarPegarChamadosComPaginacao()
     {
         // O carregamento de dados cria 20 chamados no mock.
         ChamadoController c = CriarController(true);
         var resultado = c.PegarChamados(null, null).Result; // Valor padrão de 10 por página.
-        var chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        var chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
         Assert.AreEqual(10, chamados.Count);
 
         resultado = c.PegarChamados(null, 50).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
         Assert.AreEqual(20, chamados.Count);
 
         resultado = c.PegarChamados(5, 50).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
         Assert.AreEqual(15, chamados.Count);
 
         resultado = c.PegarChamados(15, null).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
         Assert.AreEqual(5, chamados.Count);
 
         resultado = c.PegarChamados(20, null).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado, c);
+        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
         Assert.AreEqual(0, chamados.Count);
     }
-
-    //[Test]
-    //public void TestEndpointUpdateArticle()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Count();
-    //    //long longResult = AssertOk<long>(result, 15);
-
-    //    //result = c.Articles(4067); // Starlink Mission
-    //    //Assert.IsInstanceOf<OkObjectResult>(result);
-    //    //OkObjectResult okResult = (OkObjectResult)result;
-    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
-    //    //XArticle a = (XArticle)okResult.Value;
-    //    //a.Title = a.Title += " [Updated]";
-    //    //c.ArticlesPut(4067, a);
-    //    //AssertStarlinkMission(a, "Starlink Mission [Updated]");
-
-    //    //result = c.Count();
-    //    //AssertOk<long>(result, longResult);
-    //}
-
-    //[Test]
-    //public void TestEndpointUpdateArticleErrors()
-    //{
-    //    //var configuration = new MapperConfiguration(cfg =>
-    //    //{
-    //    //    cfg.CreateMap<XArticle, XArticle>();
-    //    //});
-    //    //Mapper m = new Mapper(configuration);
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.ArticlesPut(4067, null);
-    //    //AssertError(result, "Invalid Article.");
-
-    //    //result = c.Articles(4067); // Starlink Mission
-    //    //Assert.IsInstanceOf<OkObjectResult>(result);
-    //    //OkObjectResult okResult = (OkObjectResult)result;
-    //    //Assert.IsInstanceOf<XArticle>(okResult.Value);
-    //    //XArticle a = m.Map<XArticle>(okResult.Value);
-
-    //    //result = c.ArticlesPut(154787985, a);
-    //    //AssertNotFoundError(result, "Article 154787985 not found.");
-
-    //    //a.Title = a.Url = a.ImageUrl = string.Empty;
-    //    //result = c.ArticlesPut(4067, a);
-    //    //AssertError(result, $"Title not informed.{Environment.NewLine}Url not informed.{Environment.NewLine}ImageUrl not informed.");
-
-    //    //a.Title = "Starlink Mission";
-    //    //result = c.ArticlesPut(4067, a);
-    //    //AssertError(result, $"Url not informed.{Environment.NewLine}ImageUrl not informed.");
-
-    //    //a.Url = "This is a Url content";
-    //    //result = c.ArticlesPut(4067, a);
-    //    //AssertError(result, $"ImageUrl not informed.");
-    //}
-
-    //[Test]
-    //public void TestEndpointArticlesDeleteTrue()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Count();
-    //    //long longResult = AssertOk<long>(result, 15);
-
-    //    //result = c.ArticlesDelete(4067);
-    //    //Assert.IsInstanceOf<NoContentResult>(result);
-
-    //    //result = c.Count();
-    //    //AssertOk<long>(result, longResult - 1);
-    //}
-
-    //[Test]
-    //public void TestEndpointArticlesDeleteFalse()
-    //{
-    //    //ArticleController c = CreateController(true);
-    //    //IActionResult result = c.Count();
-    //    //long longResult = AssertOk<long>(result, 15);
-
-    //    //result = c.ArticlesDelete(157849);
-    //    //Assert.IsInstanceOf<NotFoundResult>(result);
-
-    //    //result = c.Count();
-    //    //AssertOk<long>(result, 15);
-    //}
-
-    //private long GetCount(ArticleController pController)
-    //{
-    //    IActionResult result = pController.Count();
-    //    OkObjectResult okResult = (OkObjectResult)result;
-    //    return (long)okResult.Value;
-    //}
 
     private ChamadoController CriarController(bool pLoadData = false)
     {
@@ -214,28 +215,6 @@ public class ArticleControllerTest
         IChamadosServico servico = new ChamadosServico(mock);
         return new ChamadoController(servico);
     }
-
-    //public ArticleController AssertSearchPaginatedArticles(int? pStart, int? pLimit, int pAmount, ArticleController pController = null)
-    //{
-    //    ArticleController c = pController ?? CreateController(true); // Alimenta 15 artigos.
-    //    IActionResult result = c.Articles(pLimit, pStart);
-
-    //    Assert.IsInstanceOf<OkObjectResult>(result);
-    //    OkObjectResult okResult = (OkObjectResult)result;
-    //    Assert.IsInstanceOf<IEnumerable<XArticle>>(okResult.Value);
-    //    IEnumerable<XArticle> enm = (IEnumerable<XArticle>)okResult.Value;
-    //    XArticle[] resultArticles = enm.ToArray();
-    //    Assert.AreEqual(pAmount, resultArticles.Length);
-    //    return c;
-    //}
-
-    //private void AssertNotFoundError(IActionResult pResult, string pMessage)
-    //{
-    //    Assert.IsInstanceOf<NotFoundObjectResult>(pResult);
-    //    NotFoundObjectResult errorResult = (NotFoundObjectResult)pResult;
-    //    Assert.IsInstanceOf<string>(errorResult.Value);
-    //    Assert.AreEqual(pMessage, errorResult.Value);
-    //}
 
     private void AfirmarNotFound(IActionResult resultado, string mensagem)
     {
@@ -253,7 +232,7 @@ public class ArticleControllerTest
         Assert.AreEqual(mensagem, errorResult.Value);
     }
 
-    private T AfirmarOk<T>(IActionResult resultado, object valor)
+    private T AfirmarOk<T>(IActionResult resultado)
     {
         Assert.IsInstanceOf<OkObjectResult>(resultado);
         OkObjectResult okResult = (OkObjectResult)resultado;
@@ -269,21 +248,6 @@ public class ArticleControllerTest
         return (T)resultadoOkCriado.Value;
     }
 
-    //private void AssertStarlinkMission(XArticle pArticle, string pTitle = "Starlink Mission")
-    //{
-    //    Assert.AreEqual(4067, pArticle.ID);
-    //    Assert.AreEqual(false, pArticle.Featured);
-    //    Assert.AreEqual(pTitle, pArticle.Title);
-    //    Assert.AreEqual("https://www.spacex.com/news/2020/01/07/starlink-mission", pArticle.Url);
-    //    Assert.AreEqual("https://www.spacex.com/sites/spacex/files/styles/featured_news_widget_image/public/field/image/starlink_2_outtower_website.jpg?itok=-i8nhHqy", pArticle.ImageUrl);
-    //    Assert.AreEqual("SpaceX", pArticle.NewsSite);
-    //    Assert.AreEqual(string.Empty, pArticle.Summary);
-    //    Assert.AreEqual("2020-01-07T00:00:00.000Z", pArticle.PublishedAt);
-    //    Assert.AreEqual("2021-05-18T13:45:49.196Z", pArticle.UpdatedAt);
-    //    Assert.AreEqual(0, pArticle.Launches.Length);
-    //    Assert.AreEqual(0, pArticle.Events.Length);
-    //}
-
     private Domain.Entities.Chamados CriarChamado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
     {
         var c = new Domain.Entities.Chamados();
@@ -297,30 +261,4 @@ public class ArticleControllerTest
         c.Descricao = descricao;
         return c;
     }
-
-    //private XArticle CreateArticle(int? pID, string pTitle = "James Webb reach lagrange point 2", string pUrl = "This is a Url content", string pImageUrl = "This is a ImageUrl content")
-    //{
-    //    ArticleController c = CreateController();
-    //    long count = GetCount(c);
-
-    //    XArticle a = CreateArticleObject(pID, pTitle, pUrl, pImageUrl);
-
-    //    IActionResult result = c.Articles(a);
-    //    XArticle newArticle = AssertOkCreated<XArticle>(result, a);
-    //    CreatedAtActionResult resultCreated = (CreatedAtActionResult)result;
-    //    Assert.AreEqual("articles", resultCreated.ActionName);
-    //    Assert.AreEqual(1, resultCreated.RouteValues.Count);
-    //    Assert.AreEqual("id", resultCreated.RouteValues.First().Key);
-    //    Assert.AreEqual(a.ID, resultCreated.RouteValues.First().Value);
-    //    Assert.IsFalse(newArticle.Featured);
-    //    Assert.IsTrue(string.IsNullOrEmpty(a.ObjectID));
-    //    Assert.AreSame(a, newArticle);
-    //    Assert.AreEqual(pTitle, newArticle.Title);
-    //    Assert.AreEqual("On 24 January, 30 days after launch on Christmas Day, the James Webb Space Telescope...", newArticle.Summary);
-    //    Assert.AreEqual(pUrl, newArticle.Url);
-    //    Assert.AreEqual(pImageUrl, newArticle.ImageUrl);
-    //    long newCount = GetCount(c);
-    //    Assert.AreEqual(count + 1, newCount);
-    //    return newArticle;
-    //}
 }

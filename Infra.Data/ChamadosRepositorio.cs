@@ -25,6 +25,12 @@ public class ChamadosRepositorio : IChamadosRepositorio
         return await _Chamados.CountDocumentsAsync(o => o.Aberto);
     }
 
+    public async Task<bool> ExcluirAsync(string id)
+    {
+        var resultadoExclusao = await _Chamados.DeleteOneAsync(o => o.Id == id);
+        return resultadoExclusao.IsAcknowledged && resultadoExclusao.DeletedCount == 1;
+    }
+
     public async Task<Domain.Entities.Chamados> PegarChamadoPorIdAsync(string id)
     {
         return await _Chamados.Find(o => o.Id == id).FirstOrDefaultAsync();
@@ -46,9 +52,9 @@ public class ChamadosRepositorio : IChamadosRepositorio
 
     public async Task<Domain.Entities.Chamados> AtualizarAsync(Domain.Entities.Chamados chamado)
     {
-        var updateResult = await _Chamados.ReplaceOneAsync(
+        var resultadoAtualizacao = await _Chamados.ReplaceOneAsync(
             o => o.Id == chamado.Id, replacement: chamado);
-        if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
+        if (!resultadoAtualizacao.IsAcknowledged || resultadoAtualizacao.ModifiedCount == 0)
             throw new BadRequestException("Não foi possível atualizar o chamado.");
         return await PegarChamadoPorIdAsync(chamado.Id);
     }

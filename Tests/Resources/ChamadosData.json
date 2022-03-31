@@ -16,9 +16,9 @@
     "assunto": "Resultado de Testes",
     "gravidade": 4,
     "nomePessoa": "Hermione Granger",
-    "cpf": "string",
+    "cpf": "23257183283",
     "email": "hermione.granger@gmail.com",
-    "descricao": "Aguardo resultados de testes",
+    "descricao": "Aguardo resultados de testes.",
     "aberto": true,
     "dataHoraCriacao": "2022-03-30T21:14:09.089Z",
     "dataHoraUltimaAtualizacao": "2022-03-30T21:14:09.089Z"
