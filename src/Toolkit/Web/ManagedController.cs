@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Chamados.Service.Toolkit.Excecoes;
 
@@ -14,7 +14,7 @@ public abstract class ManagedController : ControllerBase
        {
            return Ok(result);
        };
-        return await TryExecute(action, pExecute);
+        return await TryExecute(action, pExecute);	
     }
 
     protected async Task<IActionResult> TryExecuteDelete(Func<Task<object>> pExecute)

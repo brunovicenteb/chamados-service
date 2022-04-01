@@ -1,4 +1,4 @@
-﻿namespace Chamados.Service.Domain.Interfaces.Repositorios;
+namespace Chamados.Service.Domain.Interfaces.Repositorios;
 
 public interface IRepositorio<T, V> where T : IEntidade<V>
 {

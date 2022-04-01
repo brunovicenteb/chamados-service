@@ -1,4 +1,4 @@
-﻿namespace Chamados.Service.Domain.Interfaces.Servicos;
+namespace Chamados.Service.Domain.Interfaces.Servicos;
 
 public interface IServico<T, V> where T : IEntidade<V>
 {

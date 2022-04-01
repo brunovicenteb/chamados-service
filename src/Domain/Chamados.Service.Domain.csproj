@@ -9,7 +9,10 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);1591</NoWarn>
-	</PropertyGroup>	
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Entidades\Chamados.cs~RFe34b31.TMP" />
+	</ItemGroup>	
 	<ItemGroup>
 	  <ProjectReference Include="..\Toolkit\Chamados.Service.Toolkit.csproj" />
 	</ItemGroup>

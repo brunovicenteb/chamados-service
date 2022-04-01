@@ -1,4 +1,4 @@
-﻿using Chamados.Service.Domain.Interfaces.Repositorios;
+using Chamados.Service.Domain.Interfaces.Repositorios;
 
 namespace Chamados.Service.Application;
 

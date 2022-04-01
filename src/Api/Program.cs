@@ -1,4 +1,4 @@
-﻿using Serilog;
+using Serilog;
 using Chamados.Service.IoC;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,4 +1,4 @@
-﻿namespace Chamados.Service.Toolkit.Web;
+namespace Chamados.Service.Toolkit.Web;
 
 public class ErrorResponse
 {

@@ -1,4 +1,4 @@
-﻿namespace Chamados.Service.Domain.Enums;
+namespace Chamados.Service.Domain.Enums;
 
 public enum Gravidade
 {

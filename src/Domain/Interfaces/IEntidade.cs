@@ -1,4 +1,4 @@
-﻿namespace Chamados.Service.Domain.Interfaces
+namespace Chamados.Service.Domain.Interfaces
 {
     public interface IEntidade<T> : IEquatable<T>
     {
