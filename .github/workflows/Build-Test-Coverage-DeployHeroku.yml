@@ -30,7 +30,9 @@ jobs:
       run: dotnet build --no-restore
 
     - name: MSTest+Coverlet
-      run: dotnet test ${{ env.PROJECT_PATH }} --logger:"html;LogFileName=resultado-testes.html"
+      run: dotnet test ${{ env.PROJECT_PATH }} 
+      
+#      --logger:"html;LogFileName=resultado-testes.html"
 
     - name: Install ReportGenerator
       if: always()
