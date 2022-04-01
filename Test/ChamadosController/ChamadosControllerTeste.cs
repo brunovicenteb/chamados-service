@@ -213,7 +213,7 @@ public class ArticleControllerTeste
     private ChamadoController CriarController(bool pLoadData = false)
     {
         IChamadosRepositorio mock = new ChamadosRepositorioMock(pLoadData);
-        IChamadosServico servico = new ChamadosServico(mock);
+        IServico servico = new ChamadosServico(mock);
         return new ChamadoController(servico);
     }
 

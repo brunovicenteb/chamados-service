@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
-using Chamados.Service.Infra.Data;
-using Chamados.Service.Application;
-using Chamados.Service.Domain.Interfaces.Repositorios;
-using Chamados.Service.Domain.Interfaces.Servicos;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.OpenApi.Models;
+using Chamados.Service.Application;
+using Chamados.Service.Infra.Data.Mongo;
+using Microsoft.Extensions.DependencyInjection;
+using Chamados.Service.Domain.Interfaces.Servicos;
+using Chamados.Service.Infra.Data.Mongo.Mapeamentos;
+using Chamados.Service.Domain.Interfaces.Repositorios;
 
 namespace Chamados.Service.IoC;
 
@@ -14,7 +15,7 @@ public static class InicializacaoDeChamados
 {
     public static void ConfiguraServicoDeChamados(this IServiceCollection servico)
     {
-        servico.AddScoped<IChamadosRepositorio, ChamadosRepositorio>();
+        servico.AddScoped<IRepositorio<Domain.Entidades.Chamados, string>, RepositorioChamado>();
         servico.AddSwaggerGen(opt =>
         {
             opt.SwaggerDoc("v1", CriaInformacoesDaApi());
@@ -30,7 +31,8 @@ public static class InicializacaoDeChamados
 
     private static void RegistraServico(IServiceCollection servico)
     {
-        servico.AddScoped<IChamadosServico, ChamadosServico>();
+        MapeamentoChamados.Mapear();
+        servico.AddScoped<IServico<Domain.Entidades.Chamados, string>, ServicoChamado>();
     }
 
     public static void ConfiguraChamados(this IApplicationBuilder app, IWebHostEnvironment env)

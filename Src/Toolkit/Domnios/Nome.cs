@@ -2,7 +2,7 @@
 
 namespace Chamados.Service.Toolkit.Domnios;
 
-public readonly struct Nome : IComparable<Nome>, IEquatable<Nome>, IComparable<string>, IEquatable<string>
+public struct Nome : IComparable<Nome>, IEquatable<Nome>, IComparable<string>, IEquatable<string>
 {
     private const int _TamanhoMinimo = 10;
     private const int _TamanhoMaximo = 50;
