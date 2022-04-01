@@ -66,7 +66,7 @@ Conforme informado na tabela acima, o banco de dados utilizado foi o **MongoDB**
 2. Entrar no diretório criado:
 
    `
-   cd Coodes-Back-End-Challenge-2021-CSharp
+   cd chamados-service
    `
 
 4. Subir o container:
