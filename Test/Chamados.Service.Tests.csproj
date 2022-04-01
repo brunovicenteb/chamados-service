@@ -26,6 +26,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Src\Api\Chamados.Service.Api.csproj" />
 	  <ProjectReference Include="..\Src\Domain\Chamados.Service.Domain.csproj" />
-	  <ProjectReference Include="..\Src\IoC\Chamados.Service.IoC.csproj" />
 	</ItemGroup>
 </Project>

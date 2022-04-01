@@ -2,14 +2,14 @@ name: Build-Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 env:
-  TESTS_PROJECT_PATH: ./Test
-  PROJECT_PATH: ./Test/Chamados.Service.Tests.csproj
+  TESTS_PROJECT_PATH: ./test
+  PROJECT_PATH: ./test/Chamados.Service.Tests.csproj
   NUGET_SERVER: https://api.nuget.org/v3/index.json
 
 jobs:
