@@ -2,6 +2,8 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<IsPackable>false</IsPackable>
+		<BaseOutputPath>..\bin\</BaseOutputPath>
+		<BaseIntermediateOutputPath>..\obj\</BaseIntermediateOutputPath>		
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Api\Chamados.Service.Api.csproj" />
-		<ProjectReference Include="..\Domain\Chamados.Service.Domain.csproj" />
+	  <ProjectReference Include="..\Src\Api\Chamados.Service.Api.csproj" />
+	  <ProjectReference Include="..\Src\Domain\Chamados.Service.Domain.csproj" />
 	</ItemGroup>
 </Project>
