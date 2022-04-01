@@ -11,13 +11,13 @@ using Chamados.Service.Domain.Interfaces.Repositorios;
 
 namespace Chamados.Service.Tests.Mock;
 
-public class ChamadosRepositorioMock : IChamadosRepositorio
+public class ChamadosRepositorioMock : IRepositorio<Domain.Entidades.Chamados, string>
 {
     static ChamadosRepositorioMock()
     {
         var configuration = new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<Domain.Entities.Chamados, Domain.Entities.Chamados>();
+            cfg.CreateMap<Domain.Entidades.Chamados, Domain.Entidades.Chamados>();
         });
         _Mapper = new Mapper(configuration);
     }
@@ -36,25 +36,25 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
             using (StreamReader reader = new StreamReader(stream))
             {
                 string json = reader.ReadToEnd();
-                _Chamados = JsonConvert.DeserializeObject<List<Domain.Entities.Chamados>>(json);
+                _Chamados = JsonConvert.DeserializeObject<List<Domain.Entidades.Chamados>>(json);
             }
         }
     }
 
-    private readonly List<Domain.Entities.Chamados> _Chamados = new List<Domain.Entities.Chamados>();
+    private readonly List<Domain.Entidades.Chamados> _Chamados = new List<Domain.Entidades.Chamados>();
 
-    public async Task<Domain.Entities.Chamados> AtualizarAsync(Domain.Entities.Chamados chamado)
+    public async Task<Domain.Entidades.Chamados> AtualizarAsync(Domain.Entidades.Chamados chamado)
     {
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            Domain.Entities.Chamados c = _Chamados.FirstOrDefault(o => o.Id == chamado.Id);
+            Domain.Entidades.Chamados c = _Chamados.FirstOrDefault(o => o.Id == chamado.Id);
             _Mapper.Map(chamado, c);
             return _Chamados.FirstOrDefault(o => o.Id == chamado.Id);
         });
     }
 
-    public async Task<Domain.Entities.Chamados> InserirAsync(Domain.Entities.Chamados chamado)
+    public async Task<Domain.Entidades.Chamados> InserirAsync(Domain.Entidades.Chamados chamado)
     {
         return await Task.Run(async () =>
         {
@@ -71,14 +71,14 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            Domain.Entities.Chamados c = _Chamados.FirstOrDefault(o => o.Id == id);
+            Domain.Entidades.Chamados c = _Chamados.FirstOrDefault(o => o.Id == id);
             if (c == null)
                 return false;
             return _Chamados.Remove(c);
         });
     }
 
-    public async Task<Domain.Entities.Chamados> PegarChamadoPorIdAsync(string id)
+    public async Task<Domain.Entidades.Chamados> PegarPorIdAsync(string id)
     {
         return await Task.Run(async () =>
         {
@@ -87,7 +87,7 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         });
     }
 
-    public async Task<IList<Domain.Entities.Chamados>> PegarChamadosAsync(int inicio, int limite)
+    public async Task<IList<Domain.Entidades.Chamados>> PegarAsync(int inicio, int limite)
     {
         return await Task.Run(async () =>
         {
@@ -101,21 +101,19 @@ public class ChamadosRepositorioMock : IChamadosRepositorio
         });
     }
 
-    public async Task<long> PegarQuantidadeAsync(bool retornarChamadosFechados)
+    public async Task<long> PegarQuantidadeAsync()
     {
         return await Task.Run(async () =>
         {
             await Console.Out.WriteAsync(string.Empty);
-            if (retornarChamadosFechados)
-                return Convert.ToInt64(_Chamados.Count);
-            return Convert.ToInt64(_Chamados.Count(o => o.Aberto));
+            return Convert.ToInt64(_Chamados.Count);
         });
     }
 
-    private Domain.Entities.Chamados Clonar(Domain.Entities.Chamados chamado)
+    private Domain.Entidades.Chamados Clonar(Domain.Entidades.Chamados chamado)
     {
         if (chamado == null)
             return null;
-        return _Mapper.Map<Domain.Entities.Chamados>(chamado);
+        return _Mapper.Map<Domain.Entidades.Chamados>(chamado);
     }
 }

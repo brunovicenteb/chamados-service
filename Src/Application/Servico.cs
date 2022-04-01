@@ -21,10 +21,10 @@ public abstract class Servico<T, V> : IServico<T, V> where T : IEntidade<V>
     public async Task<T> PegarPorIdAsync(V id)
     {
         if (EhIdentificadorVazio(id))
-            throw new BadRequestException($"Não é pegar {_NomeDaEntidade} dado sem um identificador.");
+            throw new BadRequestException($"Não é possível encontrar um {_NomeDaEntidade} sem um identificador.");
         IEntidade<V> entidade = await _Repositorio.PegarPorIdAsync(id);
         if (entidade == null)
-            throw new NotFoundException($"Não foi possível encontrar o {_NomeDaEntidade} sem o identificador informado.");
+            throw new NotFoundException($"Não foi possível encontrar o {_NomeDaEntidade} com o identificador informado.");
         return await _Repositorio.PegarPorIdAsync(id);
     }
 
@@ -52,7 +52,7 @@ public abstract class Servico<T, V> : IServico<T, V> where T : IEntidade<V>
 
     public async Task<T> InserirAsync(T entidade)
     {
-        if (EhIdentificadorVazio(entidade.Id))
+        if (!EhIdentificadorVazio(entidade.Id))
             throw new BadRequestException($"Não é possível inserir um {_NomeDaEntidade} que já possui identificador.");
         return await _Repositorio.InserirAsync(entidade);
     }

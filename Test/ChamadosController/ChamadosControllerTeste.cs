@@ -6,8 +6,6 @@ using Chamados.Service.Tests.Mock;
 using Chamados.Service.Application;
 using Chamados.Service.Domain.Enums;
 using Chamados.Service.Api.Controllers;
-using Chamados.Service.Domain.Interfaces.Servicos;
-using Chamados.Service.Domain.Interfaces.Repositorios;
 
 namespace Chamados.Service.Tests.ChamadosController;
 
@@ -20,18 +18,9 @@ public class ArticleControllerTeste
     public void TestaPegarQuantidade()
     {
         ChamadoController c = CriarController(true);
-        IActionResult result = c.PegarQuantidade(true).Result;
+        IActionResult result = c.PegarQuantidade().Result;
         long longResult = AfirmarOk<long>(result);
         Assert.AreEqual(longResult, 20);
-    }
-
-    [Test]
-    public void TestaPegarQuantidadeSemChamadosFechados()
-    {
-        ChamadoController c = CriarController(true);
-        IActionResult result = c.PegarQuantidade(false).Result;
-        long longResult = AfirmarOk<long>(result);
-        Assert.AreEqual(16, longResult);
     }
 
     [Test]
@@ -39,7 +28,7 @@ public class ArticleControllerTeste
     {
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.PegarChamadoPorId(_JamesCameronId).Result;
-        var chamado = AfirmarOk<Domain.Entities.Chamados>(resultado);
+        var chamado = AfirmarOk<Domain.Entidades.Chamados>(resultado);
         Assert.IsFalse(string.IsNullOrEmpty(chamado.Id));
         Assert.IsFalse(chamado.Aberto);
         Assert.AreEqual("Limpesa das lentes", chamado.Assunto);
@@ -70,14 +59,14 @@ public class ArticleControllerTeste
     public void TestaCriarChamado()
     {
         ChamadoController c = CriarController(false);
-        IActionResult resultQuantidade = c.PegarQuantidade(true).Result;
+        IActionResult resultQuantidade = c.PegarQuantidade().Result;
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 0);
 
         var chamado = CriarChamado(string.Empty, "Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "39815683039",
             "maria.sharapova@gmail.com", "Preciso repor minha raquete de treinos com urgência.");
         IActionResult resultado = c.Inserir(chamado).Result;
-        var resultadoChamado = AfirmarOkCriado<Domain.Entities.Chamados>(resultado, c);
+        var resultadoChamado = AfirmarOkCriado<Domain.Entidades.Chamados>(resultado, c);
         Assert.IsFalse(string.IsNullOrEmpty(resultadoChamado.Id));
         Assert.IsTrue(resultadoChamado.Aberto);
         Assert.AreEqual("Maria Sharapova", resultadoChamado.NomePessoa);
@@ -87,7 +76,7 @@ public class ArticleControllerTeste
         Assert.AreEqual("maria.sharapova@gmail.com", resultadoChamado.Email);
         Assert.AreEqual("Preciso repor minha raquete de treinos com urgência.", resultadoChamado.Descricao);
 
-        resultQuantidade = c.PegarQuantidade(true).Result;
+        resultQuantidade = c.PegarQuantidade().Result;
         longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 1);
     }
@@ -108,26 +97,26 @@ public class ArticleControllerTeste
     {
         ChamadoController c = CriarController(true);
         var resultadoChamadoOriginal = c.PegarChamadoPorId(_HermioneGrangerId).Result;
-        var chamadoOriginal = AfirmarOk<Domain.Entities.Chamados>(resultadoChamadoOriginal);
+        var chamadoOriginal = AfirmarOk<Domain.Entidades.Chamados>(resultadoChamadoOriginal);
         Assert.AreEqual("Hermione Granger", chamadoOriginal.NomePessoa);
         Assert.AreEqual("hermione.granger@gmail.com", chamadoOriginal.Email);
         Assert.AreEqual("Resultado de Testes", chamadoOriginal.Assunto);
         Assert.AreEqual("Aguardo resultados de testes.", chamadoOriginal.Descricao);
 
-        IActionResult resultQuantidade = c.PegarQuantidade(true).Result;
+        IActionResult resultQuantidade = c.PegarQuantidade().Result;
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 20);
 
         var chamadoAtualizado = CriarChamado(_HermioneGrangerId, "Hermione Granger", "Resultado de Testes Atualizados", Gravidade.Bloqueador, "23257183283",
             "hermione.granger@gmail.com", "Aguardo resultados de testes atualizados.");
         var resultadoChamadoAtualizado = c.Atualizar(chamadoAtualizado).Result;
-        chamadoAtualizado = AfirmarOk<Domain.Entities.Chamados>(resultadoChamadoAtualizado);
+        chamadoAtualizado = AfirmarOk<Domain.Entidades.Chamados>(resultadoChamadoAtualizado);
         Assert.AreEqual("Hermione Granger", chamadoAtualizado.NomePessoa);
         Assert.AreEqual("hermione.granger@gmail.com", chamadoAtualizado.Email);
         Assert.AreEqual("Resultado de Testes Atualizados", chamadoAtualizado.Assunto);
         Assert.AreEqual("Aguardo resultados de testes atualizados.", chamadoAtualizado.Descricao);
 
-        resultQuantidade = c.PegarQuantidade(true).Result;
+        resultQuantidade = c.PegarQuantidade().Result;
         longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 20);
     }
@@ -156,14 +145,14 @@ public class ArticleControllerTeste
     public void TestaExcluirChamado()
     {
         ChamadoController c = CriarController(true);
-        IActionResult resultQuantidade = c.PegarQuantidade(true).Result;
+        IActionResult resultQuantidade = c.PegarQuantidade().Result;
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 20);
 
         IActionResult resultado = c.Excluir(_JamesCameronId).Result;
         Assert.IsInstanceOf<NoContentResult>(resultado);
 
-        resultQuantidade = c.PegarQuantidade(true).Result;
+        resultQuantidade = c.PegarQuantidade().Result;
         longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 19);
     }
@@ -190,30 +179,30 @@ public class ArticleControllerTeste
         // O carregamento de dados cria 20 chamados no mock.
         ChamadoController c = CriarController(true);
         var resultado = c.PegarChamados(null, null).Result; // Valor padrão de 10 por página.
-        var chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
+        var chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
         Assert.AreEqual(10, chamados.Count);
 
         resultado = c.PegarChamados(null, 50).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
         Assert.AreEqual(20, chamados.Count);
 
         resultado = c.PegarChamados(5, 50).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
         Assert.AreEqual(15, chamados.Count);
 
         resultado = c.PegarChamados(15, null).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
         Assert.AreEqual(5, chamados.Count);
 
         resultado = c.PegarChamados(20, null).Result;
-        chamados = AfirmarOk<IList<Domain.Entities.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
         Assert.AreEqual(0, chamados.Count);
     }
 
     private ChamadoController CriarController(bool pLoadData = false)
     {
-        IChamadosRepositorio mock = new ChamadosRepositorioMock(pLoadData);
-        IServico servico = new ChamadosServico(mock);
+        ChamadosRepositorioMock mock = new ChamadosRepositorioMock(pLoadData);
+        ServicoChamado servico = new ServicoChamado(mock);
         return new ChamadoController(servico);
     }
 
@@ -249,9 +238,9 @@ public class ArticleControllerTeste
         return (T)resultadoOkCriado.Value;
     }
 
-    private Domain.Entities.Chamados CriarChamado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
+    private Domain.Entidades.Chamados CriarChamado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
     {
-        var c = new Domain.Entities.Chamados();
+        var c = new Domain.Entidades.Chamados();
         c.Id = id;
         c.Aberto = true;
         c.NomePessoa = nomePessoa;

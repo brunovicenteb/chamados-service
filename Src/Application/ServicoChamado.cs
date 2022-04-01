@@ -5,7 +5,7 @@ namespace Chamados.Service.Application;
 public class ServicoChamado : Servico<Domain.Entidades.Chamados, string>
 {
     public ServicoChamado(IRepositorio<Domain.Entidades.Chamados, string> repositorio)
-        : base(repositorio, "Chamado")
+        : base(repositorio, "chamado")
     {
     }
 
