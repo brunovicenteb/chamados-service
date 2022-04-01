@@ -39,14 +39,13 @@ public class Chamados
     /// <example>31159486549</example>
     [JsonPropertyName("cpf")]
     [BsonRepresentation(BsonType.String)]
-    public string CPF { get; set; }
+    public CPF CPF { get; set; }
 
     /// <summary>E-mail da pessoa que criou o chamado</summary>
     /// <example>margot.robbie@gmail.com</example>
     [JsonPropertyName("email")]
     [BsonRepresentation(BsonType.String)]
-    public string Email { get; set; }
-
+    public Email Email { get; set; }
 
     /// <summary>Descrição detalhada do chamado</summary>
     /// <example>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</example>

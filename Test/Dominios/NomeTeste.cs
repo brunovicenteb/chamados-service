@@ -6,7 +6,7 @@ namespace Chamados.Service.Tests.Dominios;
 public class NomeTeste
 {
     [Test]
-    public void TestaCriacao()
+    public void TestarCriacao()
     {
         Nome nome = new Nome("Samwise Gamgee");
         Assert.AreEqual("Samwise Gamgee", nome.Valor);
@@ -16,7 +16,7 @@ public class NomeTeste
     }
 
     [Test]
-    public void TestaComparacaoComOutroNome()
+    public void TestarComparacaoComOutroNome()
     {
         Nome primeiroNome = new Nome("Lisbeth Salander");
         Nome segundoNome = new Nome("Lisbeth Salander");
@@ -27,7 +27,7 @@ public class NomeTeste
     }
 
     [Test]
-    public void TestaComparacaoComString()
+    public void TestarComparacaoComString()
     {
         Nome nome = new Nome("Sarah Connor");
         Assert.IsTrue("Sarah Connor" == nome);
@@ -42,25 +42,71 @@ public class NomeTeste
     }
 
     [Test]
-    public void TestaValidacaoRequerido()
+    public void TestarValidacaoEstaVazio()
     {
-        Nome primeiroNome = new Nome("Atleta", true);
-        Assert.AreEqual("O Campo Atleta é requerido.", primeiroNome.Validar());
+        Nome primeiroNome = string.Empty;
+        Assert.IsTrue(primeiroNome.EstaVazio);
 
-        primeiroNome = "Serena Williams";
-        Assert.AreEqual(string.Empty, primeiroNome.Validar());
+        primeiroNome = "Capitão Kirk";
+        Assert.IsFalse(primeiroNome.EstaVazio);
     }
 
     [Test]
-    public void TestaValidacaoTamanhoMinimo()
+    public void TestarValidacaoEstaPreenchido()
     {
-        Nome primeiroNome = new Nome("Atleta", true, 20);
-        Assert.AreEqual("O Campo Atleta precisa ter mais de 20 caracteres.", primeiroNome.Validar());
+        Nome primeiroNome = string.Empty;
+        Assert.IsFalse(primeiroNome.EstaPreenchido);
 
-        //primeiroNome = "Serena Williams";
-        //Assert.AreEqual("O Campo Atleta precisa ter mais de 20 caracteres.", primeiroNome.Validar());
+        primeiroNome = "Smeagol";
+        Assert.IsTrue(primeiroNome.EstaPreenchido);
+    }
 
-        //primeiroNome = "Maria Esther Andion Bueno";
-        //Assert.AreEqual(string.Empty, primeiroNome.Validar());
+    [Test]
+    public void TestarValidacaoComCampoNaoRequerido()
+    {
+        Nome primeiroNome = string.Empty;
+        Assert.AreEqual(string.Empty, primeiroNome.Validar("Atriz", false));
+    }
+
+    [Test]
+    public void TestarValidacaoDeTamanhoMinimoComCampoNaoRequerido()
+    {
+        TestarTamanhoMinimo(false);
+    }
+
+    [Test]
+    public void TestarValidacaoDeTamanhoMinimoComCampoRequerido()
+    {
+        TestarTamanhoMinimo(true);
+    }
+
+    [Test]
+    public void TestarValidacaoDeTamanhoMaximoComCampoNaoRequerido()
+    {
+        TestarTamanhoMaximo(false);
+    }
+
+    [Test]
+    public void TestarValidacaoDeTamanhoMaximoComCampoRequerido()
+    {
+        TestarTamanhoMaximo(true);
+    }
+
+    private void TestarTamanhoMinimo(bool ehRequerido)
+    {
+        Nome nome = "Maria";
+        Assert.AreEqual("O Campo Tenista precisa ter mais de 10 caracteres.", nome.Validar("Tenista", ehRequerido));
+
+        nome = "Maria Esther Andion Bueno";
+        Assert.AreEqual(string.Empty, nome.Validar("Tenista", ehRequerido));
+    }
+
+    private void TestarTamanhoMaximo(bool ehRequerido)
+    {
+        Nome nome = "Pedro de Alcântara Francisco Antônio João Carlos Xavier de Paula Miguel...";
+        Assert.AreEqual("O Campo Imperador não pode ter mais de 50 caracteres.", nome.Validar("Imperador", ehRequerido));
+
+        nome = "Dom Pedro I";
+        Assert.AreEqual(string.Empty, nome.Validar("Imperador", ehRequerido));
     }
 }

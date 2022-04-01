@@ -4,6 +4,9 @@ namespace Chamados.Service.Toolkit.Domnios;
 
 public readonly struct Nome : IComparable<Nome>, IEquatable<Nome>, IComparable<string>, IEquatable<string>
 {
+    private const int _TamanhoMinimo = 10;
+    private const int _TamanhoMaximo = 50;
+
     public static bool operator ==(Nome a, Nome b) => a.CompareTo(b) == 0;
 
     public static bool operator !=(Nome a, Nome b) => !(a == b);
@@ -20,31 +23,16 @@ public readonly struct Nome : IComparable<Nome>, IEquatable<Nome>, IComparable<s
 
     public static implicit operator string(Nome nome) => nome.Valor;
 
-    public Nome(string valor)
-        : this(valor, string.Empty, false)
-    {
-    }
-
-    public Nome(string nomeCampo, bool ehRequerido, int? tamanhoMinimo = null, int? tamanhoMaximo = null)
-        : this(null, nomeCampo, ehRequerido, tamanhoMinimo, tamanhoMaximo)
-    {
-    }
-
-    public Nome(string valor, string nomeCampo, bool ehRequerido, int? tamanhoMinimo = null, int? tamanhoMaximo = null)
+    public Nome(string valor = null)
     {
         Valor = valor;
-        _NomeCampo = nomeCampo;
-        _EhRequerido = ehRequerido;
-        _TamanhoMinimo = tamanhoMinimo;
-        _TamanhoMaximo = tamanhoMaximo;
     }
 
-    private readonly string _NomeCampo;
-    private readonly bool _EhRequerido;
-    private readonly int? _TamanhoMinimo;
-    private readonly int? _TamanhoMaximo;
-
     public string Valor { get; }
+
+    public bool EstaVazio { get => string.IsNullOrEmpty(Valor); }
+
+    public bool EstaPreenchido { get => !EstaVazio; }
 
     public bool Equals(Nome outro) => this.Valor.Equals(outro.Valor);
 
@@ -65,15 +53,16 @@ public readonly struct Nome : IComparable<Nome>, IEquatable<Nome>, IComparable<s
         return obj is Nome outro && Equals(outro);
     }
 
-    public string Validar()
+    public string Validar(string nomeDoCampo, bool ehRequerido)
     {
-        int tam = Valor == null ? 0 : Valor.Length;
-        if (_TamanhoMinimo.HasValue && _TamanhoMinimo.Value > tam)
-            return $"O Campo {_NomeCampo} precisa ter mais de {_TamanhoMinimo.Value} caracteres.";
-        else if (_TamanhoMaximo.HasValue && _TamanhoMaximo.Value < tam)
-            return $"O Campo {_NomeCampo} não pode ter mais de {_TamanhoMaximo.Value} caracteres.";
-        else if (_EhRequerido && string.IsNullOrEmpty(Valor))
-            return $"O Campo {_NomeCampo} é requerido.";
+        if (ehRequerido || EstaPreenchido)
+        {
+            int tam = EstaVazio ? 0 : Valor.Length;
+            if (_TamanhoMinimo > tam)
+                return $"O Campo {nomeDoCampo} precisa ter mais de {_TamanhoMinimo} caracteres.";
+            else if (_TamanhoMaximo < tam)
+                return $"O Campo {nomeDoCampo} não pode ter mais de {_TamanhoMaximo} caracteres.";
+        }
         return string.Empty;
     }
 }
