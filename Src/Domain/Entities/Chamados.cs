@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using Chamados.Service.Domain.Enums;
 using System.Text.Json.Serialization;
+using Chamados.Service.Toolkit.Domnios;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Chamados.Service.Domain.Entities;
@@ -32,7 +33,7 @@ public class Chamados
     /// <example>Margot Robbie</example>
     [JsonPropertyName("nomePessoa")]
     [BsonRepresentation(BsonType.String)]
-    public string NomePessoa { get; set; }
+    public Nome NomePessoa { get; set; }
 
     /// <summary>CPF da pessoa que criou o chamado</summary>
     /// <example>31159486549</example>

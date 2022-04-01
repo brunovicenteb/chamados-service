@@ -12,6 +12,9 @@
 	</PropertyGroup>	
 	<ItemGroup>
 		<PackageReference Include="MongoDB.Driver" Version="2.15.0" />
+	</ItemGroup>	
+	<ItemGroup>
+	  <ProjectReference Include="..\Toolkit\Chamados.Service.Toolkit.csproj" />
 	</ItemGroup>
 
 </Project>

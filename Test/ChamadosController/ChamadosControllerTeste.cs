@@ -9,8 +9,9 @@ using Chamados.Service.Api.Controllers;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
 
-namespace Chamados.Service.Tests;
-public class ArticleControllerTest
+namespace Chamados.Service.Tests.ChamadosController;
+
+public class ArticleControllerTeste
 {
     private const string _JamesCameronId = "6244c7ea757c678abca6716d";
     private const string _HermioneGrangerId = "6244c826eb6aeb6c5f44b0d0";
