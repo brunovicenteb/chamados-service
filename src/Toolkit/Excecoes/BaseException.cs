@@ -1,4 +1,4 @@
-﻿namespace Chamados.Service.Toolkit.Excecoes;
+namespace Chamados.Service.Toolkit.Excecoes;
 
 public abstract class BaseException : Exception
 {

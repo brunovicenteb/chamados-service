@@ -1,4 +1,4 @@
-﻿using Chamados.Service.Toolkit.Excecoes;
+using Chamados.Service.Toolkit.Excecoes;
 using Chamados.Service.Domain.Interfaces;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
@@ -21,7 +21,7 @@ public abstract class Servico<T, V> : IServico<T, V> where T : IEntidade<V>
     public async Task<T> PegarPorIdAsync(V id)
     {
         if (EhIdentificadorVazio(id))
-            throw new BadRequestException($"Não é possível encontrar um {_NomeDaEntidade} sem um identificador.");
+            throw new BadRequestException($"Não foi possível encontrar um {_NomeDaEntidade} sem um identificador.");
         IEntidade<V> entidade = await _Repositorio.PegarPorIdAsync(id);
         if (entidade == null)
             throw new NotFoundException($"Não foi possível encontrar o {_NomeDaEntidade} com o identificador informado.");
@@ -43,7 +43,7 @@ public abstract class Servico<T, V> : IServico<T, V> where T : IEntidade<V>
     public async Task<T> AtualizarAsync(T entidade)
     {
         if (EhIdentificadorVazio(entidade.Id))
-            throw new BadRequestException($"Não é possível atualizar um {_NomeDaEntidade} sem um identificador.");
+            throw new BadRequestException($"Não foi possível atualizar um {_NomeDaEntidade} sem um identificador.");
         IEntidade<V> e = await _Repositorio.PegarPorIdAsync(entidade.Id);
         if (e == null)
             throw new NotFoundException($"Não foi possível atualizar o {_NomeDaEntidade} com o identificador informado.");
@@ -53,14 +53,14 @@ public abstract class Servico<T, V> : IServico<T, V> where T : IEntidade<V>
     public async Task<T> InserirAsync(T entidade)
     {
         if (!EhIdentificadorVazio(entidade.Id))
-            throw new BadRequestException($"Não é possível inserir um {_NomeDaEntidade} que já possui identificador.");
+            throw new BadRequestException($"Não foi possível inserir um {_NomeDaEntidade} que já possui identificador.");
         return await _Repositorio.InserirAsync(entidade);
     }
 
     public async Task<bool> ExcluirAsync(V id)
     {
         if (EhIdentificadorVazio(id))
-            throw new BadRequestException($"Não é possível excluir um {_NomeDaEntidade} sem um identificador.");
+            throw new BadRequestException($"Não foi possível excluir um {_NomeDaEntidade} sem um identificador.");
         IEntidade<V> e = await _Repositorio.PegarPorIdAsync(id);
         if (e == null)
             throw new NotFoundException($"Não foi possível excluir o {_NomeDaEntidade} com o identificador informado.");

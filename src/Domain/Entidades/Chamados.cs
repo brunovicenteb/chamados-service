@@ -1,4 +1,4 @@
-﻿using Chamados.Service.Domain.Enums;
+using Chamados.Service.Domain.Enums;
 using Chamados.Service.Domain.Interfaces;
 
 namespace Chamados.Service.Domain.Entidades;

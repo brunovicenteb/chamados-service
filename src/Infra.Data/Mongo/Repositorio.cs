@@ -1,4 +1,4 @@
-﻿using MongoDB.Driver;
+using MongoDB.Driver;
 using Chamados.Service.Toolkit.Excecoes;
 using Microsoft.Extensions.Configuration;
 using Chamados.Service.Domain.Interfaces;

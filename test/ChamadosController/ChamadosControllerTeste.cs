@@ -44,7 +44,7 @@ public class ArticleControllerTeste
     {
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.PegarChamadoPorId(Guid.NewGuid().ToString()).Result;
-        AfirmarNotFound(resultado, "N„o foi possÌvel encontrar o chamado com o identificador informado.");
+        AfirmarNotFound(resultado, "N√£o foi poss√≠vel encontrar o chamado com o identificador informado.");
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class ArticleControllerTeste
     {
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.PegarChamadoPorId(string.Empty).Result;
-        AfirmarBadRequest(resultado, "N„o È possÌvel encontrar um chamado sem um identificador.");
+        AfirmarBadRequest(resultado, "N√£o foi poss√≠vel encontrar um chamado sem um identificador.");
     }
 
     [Test]
@@ -63,18 +63,18 @@ public class ArticleControllerTeste
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 0);
 
-        var chamado = CriarChamado(string.Empty, "Maria Sharapova", "SubstituiÁ„o de Raquete", Gravidade.Bloqueador, "39815683039",
-            "maria.sharapova@gmail.com", "Preciso repor minha raquete de treinos com urgÍncia.");
+        var chamado = CriarChamado(string.Empty, "Maria Sharapova", "Substitui√ß√£o de Raquete", Gravidade.Bloqueador, "39815683039",
+            "maria.sharapova@gmail.com", "Preciso repor minha raquete de treinos com urg√™ncia.");
         IActionResult resultado = c.Inserir(chamado).Result;
         var resultadoChamado = AfirmarOkCriado<Domain.Entidades.Chamados>(resultado, c);
         Assert.IsFalse(string.IsNullOrEmpty(resultadoChamado.Id));
         Assert.IsTrue(resultadoChamado.Aberto);
         Assert.AreEqual("Maria Sharapova", resultadoChamado.NomePessoa);
-        Assert.AreEqual("SubstituiÁ„o de Raquete", resultadoChamado.Assunto);
+        Assert.AreEqual("Substitui√ß√£o de Raquete", resultadoChamado.Assunto);
         Assert.AreEqual(Gravidade.Bloqueador, resultadoChamado.Gravidade);
         Assert.AreEqual("39815683039", resultadoChamado.CPF);
         Assert.AreEqual("maria.sharapova@gmail.com", resultadoChamado.Email);
-        Assert.AreEqual("Preciso repor minha raquete de treinos com urgÍncia.", resultadoChamado.Descricao);
+        Assert.AreEqual("Preciso repor minha raquete de treinos com urg√™ncia.", resultadoChamado.Descricao);
 
         resultQuantidade = c.PegarQuantidade().Result;
         longResult = AfirmarOk<long>(resultQuantidade);
@@ -84,12 +84,12 @@ public class ArticleControllerTeste
     [Test]
     public void TestaCriarChamadoComIdPreenchido()
     {
-        //Criar objeto com id que j· existente dentro do Mock.
+        //Criar objeto com id que j√° existente dentro do Mock.
         var chamado = CriarChamado("6244c826eb6aeb6c5f44b0d0", "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
-            "james.cameron@gmail.com", "Precisamos limpar as c‚meras semanalmente.");
+            "james.cameron@gmail.com", "Precisamos limpar as c√¢meras semanalmente.");
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Inserir(chamado).Result;
-        AfirmarBadRequest(resultado, "N„o È possÌvel inserir um chamado que j· possui identificador.");
+        AfirmarBadRequest(resultado, "N√£o foi poss√≠vel inserir um chamado que j√° possui identificador.");
     }
 
     [Test]
@@ -125,20 +125,20 @@ public class ArticleControllerTeste
     public void TestaAtualizarChamadoSemIdPreenchido()
     {
         var chamado = CriarChamado(string.Empty, "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
-            "james.cameron@gmail.com", "Precisamos limpar as c‚meras semanalmente.");
+            "james.cameron@gmail.com", "Precisamos limpar as c√¢meras semanalmente.");
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Atualizar(chamado).Result;
-        AfirmarBadRequest(resultado, "N„o È possÌvel atualizar um chamado sem um identificador.");
+        AfirmarBadRequest(resultado, "N√£o foi poss√≠vel atualizar um chamado sem um identificador.");
     }
 
     [Test]
     public void TestaAtualizarChamadoComIdPreenchido()
     {
         var chamado = CriarChamado(Guid.NewGuid().ToString(), "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
-            "james.cameron@gmail.com", "Precisamos limpar as c‚meras semanalmente.");
+            "james.cameron@gmail.com", "Precisamos limpar as c√¢meras semanalmente.");
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Atualizar(chamado).Result;
-        AfirmarNotFound(resultado, "N„o foi possÌvel atualizar o chamado com o identificador informado.");
+        AfirmarNotFound(resultado, "N√£o foi poss√≠vel atualizar o chamado com o identificador informado.");
     }
 
     [Test]
@@ -162,7 +162,7 @@ public class ArticleControllerTeste
     {
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Excluir(string.Empty).Result;
-        AfirmarBadRequest(resultado, "N„o È possÌvel excluir um chamado sem um identificador.");
+        AfirmarBadRequest(resultado, "N√£o foi poss√≠vel excluir um chamado sem um identificador.");
     }
 
     [Test]
@@ -170,7 +170,7 @@ public class ArticleControllerTeste
     {
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Excluir(Guid.NewGuid().ToString()).Result;
-        AfirmarNotFound(resultado, "N„o foi possÌvel excluir o chamado com o identificador informado.");
+        AfirmarNotFound(resultado, "N√£o foi poss√≠vel excluir o chamado com o identificador informado.");
     }
 
     [Test]
@@ -178,7 +178,7 @@ public class ArticleControllerTeste
     {
         // O carregamento de dados cria 20 chamados no mock.
         ChamadoController c = CriarController(true);
-        var resultado = c.PegarChamados(null, null).Result; // Valor padr„o de 10 por p·gina.
+        var resultado = c.PegarChamados(null, null).Result; // Valor padr√£o de 10 por p√°gina.
         var chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
         Assert.AreEqual(10, chamados.Count);
 

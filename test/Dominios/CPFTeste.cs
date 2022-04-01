@@ -1,4 +1,4 @@
-﻿using Chamados.Service.Toolkit.Domnios;
+using Chamados.Service.Toolkit.Domnios;
 using NUnit.Framework;
 
 namespace Chamados.Service.Tests.Dominios;

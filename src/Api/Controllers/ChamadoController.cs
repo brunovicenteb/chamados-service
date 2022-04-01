@@ -1,4 +1,4 @@
-﻿using Chamados.Service.Toolkit.Web;
+using Chamados.Service.Toolkit.Web;
 
 namespace Chamados.Service.Api.Controllers;
 
