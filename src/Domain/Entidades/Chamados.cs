@@ -38,7 +38,7 @@ public class Chamados : IEntidade<string>
 
     /// <summary>Data e Hora da criação do chamado</summary>
     /// <example>10/09/1974 01:17:48</example>
-    public DateTime DataHoraCriacao { get; set; }
+    public DateTime? DataHoraCriacao { get; set; }
 
     /// <summary>Data e Hora da última alteração do chamado</summary>
     /// <example>09/03/1987 10:30:47</example>
