@@ -9,7 +9,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.ConfiguraServicoDeChamados();
+builder.Services.ConfiguraServicoDeChamados(builder.Configuration);
 
 var app = builder.Build();
 

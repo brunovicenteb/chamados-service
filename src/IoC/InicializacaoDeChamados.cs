@@ -3,7 +3,9 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Chamados.Service.Application;
-using Chamados.Service.Infra.Data.Mongo;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Chamados.Service.Infra.Data.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Infra.Data.Mongo.Mapeamentos;
@@ -13,10 +15,11 @@ namespace Chamados.Service.IoC;
 
 public static class InicializacaoDeChamados
 {
-    public static void ConfiguraServicoDeChamados(this IServiceCollection servico)
+    public static void ConfiguraServicoDeChamados(this IServiceCollection servicos, IConfiguration configuracoes)
     {
-        servico.AddScoped<IRepositorio<Domain.Entidades.Chamados, string>, RepositorioChamado>();
-        servico.AddSwaggerGen(opt =>
+        var stringDeConexao = configuracoes.GetValue<string>("PostgreSettings:ConnectionString");
+        servicos.AddDbContext<ContextoPostgres>(o => o.UseNpgsql(stringDeConexao), ServiceLifetime.Transient);
+        servicos.AddSwaggerGen(opt =>
         {
             opt.SwaggerDoc("v1", CriaInformacoesDaApi());
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -26,13 +29,14 @@ public static class InicializacaoDeChamados
             xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             opt.IncludeXmlComments(xmlPath);
         });
-        RegistraServico(servico);
+        RegistraServico(servicos);
     }
 
-    private static void RegistraServico(IServiceCollection servico)
+    private static void RegistraServico(IServiceCollection servicos)
     {
         MapeamentoChamados.Mapear();
-        servico.AddScoped<IServico<Domain.Entidades.Chamados, string>, ServicoChamado>();
+        servicos.AddScoped<IServico<Domain.Entidades.Chamados, string>, ServicoChamado>();
+        servicos.AddScoped<IRepositorio<Domain.Entidades.Chamados, string>, RepositorioChamadoPostgres>();
     }
 
     public static void ConfiguraChamados(this IApplicationBuilder app, IWebHostEnvironment env)

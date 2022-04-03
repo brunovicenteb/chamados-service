@@ -2,9 +2,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Chamados.Service.Infra.Data.Mongo;
 
-public class RepositorioChamado : Repositorio<Domain.Entidades.Chamados, string>
+public class RepositorioChamadoPostgres : RepositorioMongo<Domain.Entidades.Chamados, string>
 {
-    public RepositorioChamado(IConfiguration configuration)
+    public RepositorioChamadoPostgres(IConfiguration configuration)
         : base(configuration, "Chamados")
     {
     }
