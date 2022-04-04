@@ -1,11 +1,12 @@
 using Chamados.Service.Domain.Enums;
 using Chamados.Service.Domain.Interfaces;
 
-namespace Chamados.Service.Domain.Entidades;
+namespace Chamados.Service.Domain.Modelos;
 
-/// <summary>Representação de um chamado de cliente.</summary>
-public class Chamados : IEntidade<string>
+/// <summary>Representação de chamado com os dados alterados.</summary>
+public class ChamadoAlterado : IEntidade<string>
 {
+    /// <summary>Identificador do chamado</summary>
     public string Id { get; set; }
 
     /// <summary>Assunto do artigo</summary>
@@ -35,14 +36,6 @@ public class Chamados : IEntidade<string>
     /// <summary>Condição do chamado</summary>
     /// <example>true</example>
     public bool Aberto { get; set; }
-
-    /// <summary>Data e Hora da criação do chamado</summary>
-    /// <example>10/09/1974 01:17:48</example>
-    public DateTime? DataHoraCriacao { get; set; }
-
-    /// <summary>Data e Hora da última alteração do chamado</summary>
-    /// <example>09/03/1987 10:30:47</example>
-    public DateTime? DataHoraUltimaAtualizacao { get; set; }
 
     public bool Equals(string outro)
     {

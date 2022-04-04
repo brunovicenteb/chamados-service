@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Chamados.Service.Domain.Entidades;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chamados.Service.Infra.Data.Postgres;
 public class ContextoPostgres : DbContext
@@ -12,18 +13,24 @@ public class ContextoPostgres : DbContext
     {
     }
 
-    public DbSet<Domain.Entidades.Chamados> Chamados { get; set; }
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    base.OnConfiguring(optionsBuilder);
+    //    optionsBuilder.UseNpgsql("User ID=;Password=;Host=;Port=5432;Pooling=true;Connection Lifetime=0;");
+    //}
+
+    public DbSet<Chamado> Chamados { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresExtension("uuid-ossp");
         modelBuilder.HasDefaultSchema("public");
-        modelBuilder.Entity<Domain.Entidades.Chamados>()
+        modelBuilder.Entity<Chamado>()
             .HasKey(e => e.Id);
-        modelBuilder.Entity<Domain.Entidades.Chamados>()
+        modelBuilder.Entity<Chamado>()
             .HasIndex(e => e.CPF)
             .IsUnique();
-        modelBuilder.Entity<Domain.Entidades.Chamados>(entity =>
+        modelBuilder.Entity<Chamado>(entity =>
         {
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");

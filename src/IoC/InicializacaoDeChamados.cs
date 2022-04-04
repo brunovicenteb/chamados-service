@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Infra.Data.Mongo.Mapeamentos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
+using Chamados.Service.Domain.Entidades;
+using Chamados.Service.Domain.Modelos;
 
 namespace Chamados.Service.IoC;
 
@@ -35,8 +37,8 @@ public static class InicializacaoDeChamados
     private static void RegistraServico(IServiceCollection servicos)
     {
         MapeamentoChamados.Mapear();
-        servicos.AddScoped<IServico<Domain.Entidades.Chamados, string>, ServicoChamado>();
-        servicos.AddScoped<IRepositorio<Domain.Entidades.Chamados, string>, RepositorioChamadoPostgres>();
+        servicos.AddScoped<IServico<Chamado, string, NovoChamado, ChamadoAlterado>, ServicoChamado>();
+        servicos.AddScoped<IRepositorio<Chamado, string>, RepositorioChamadoPostgres>();
     }
 
     public static void ConfiguraChamados(this IApplicationBuilder app, IWebHostEnvironment env)
