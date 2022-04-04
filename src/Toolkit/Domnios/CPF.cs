@@ -1,65 +1,43 @@
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Chamados.Service.Toolkit.Excecoes;
 
 namespace Chamados.Service.Toolkit.Domnios;
 
-public readonly struct CPF : IComparable<CPF>, IEquatable<CPF>, IComparable<string>, IEquatable<string>
+public record CPF : StringStruct
 {
-    public static bool operator ==(CPF a, CPF b) => a.CompareTo(b) == 0;
+    #region ConversorJson
 
-    public static bool operator !=(CPF a, CPF b) => !(a == b);
+    public class CPFJsonConverter : JsonConverter<CPF>
+    {
+        public override CPF Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return new CPF(reader.GetString());
+        }
 
-    public static bool operator ==(CPF a, string b) => a.Valor.CompareTo(b) == 0;
-
-    public static bool operator !=(CPF a, string b) => !(a == b);
-
-    public static bool operator ==(string a, CPF b) => a.CompareTo(b.Valor) == 0;
-
-    public static bool operator !=(string a, CPF b) => !(a == b);
+        public override void Write(Utf8JsonWriter writer, CPF value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString());
+        }
+    }
+    #endregion
 
     public static implicit operator CPF(string valor) => new CPF(valor);
 
     public static implicit operator string(CPF nome) => nome.Valor;
 
     public CPF(string valor = null)
+        : base(valor)
     {
-        Valor = valor;
     }
 
-    public string Valor { get; }
+    public override string ToString() => Valor?.ToString();
 
-    public bool EstaVazio { get => string.IsNullOrEmpty(Valor); }
-
-    public bool EstaPreenchido { get => !EstaVazio; }
-
-    public bool Equals(CPF outro) => this.Valor.Equals(outro.Valor);
-
-    public bool Equals(string outro) => this.Valor.Equals(outro);
-
-    public int CompareTo(CPF outro) => Valor.CompareTo(outro.Valor);
-
-    public int CompareTo(string outro) => Valor.CompareTo(outro);
-
-    public override int GetHashCode() => Valor.GetHashCode();
-
-    public override string ToString() => Valor.ToString();
-
-    public override bool Equals(object obj)
+    protected override void Validar(string valor)
     {
-        if (ReferenceEquals(null, obj))
-            return false;
-        return obj is CPF outro && Equals(outro);
-    }
-
-    public string Validar(string nomeDoCampo, bool ehRequerido)
-    {
-        if (EstaPreenchido)
-        {
-            if (!EhCpfValido(Valor))
-                return $"Campo {nomeDoCampo} possui dados inválidos.";
-        }
-        if (ehRequerido && EstaVazio)
-            return $"O campo {nomeDoCampo} não pode ficar vazio.";
-        return string.Empty;
+        base.Validar(valor);
+        if (!EhCpfValido(valor))
+            throw new BadRequestException($"O CPF não é válido.");
     }
 
     private bool EhCpfValido(string cpf)

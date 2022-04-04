@@ -41,84 +41,84 @@ public class CPFTeste
         Assert.AreNotEqual(cpf, "424.288.820-15");
     }
 
-    [Test]
-    public void TestarValidacaoEstaVazio()
-    {
-        CPF cpf = string.Empty;
-        Assert.IsTrue(cpf.EstaVazio);
+    //[Test]
+    //public void TestarValidacaoEstaVazio()
+    //{
+    //    CPF cpf = string.Empty;
+    //    Assert.IsTrue(cpf.EstaVazio);
 
-        cpf = "996.750.520-66";
-        Assert.IsFalse(cpf.EstaVazio);
-    }
+    //    cpf = "996.750.520-66";
+    //    Assert.IsFalse(cpf.EstaVazio);
+    //}
 
-    [Test]
-    public void TestarValidacaoEstaPreenchido()
-    {
-        CPF cpf = string.Empty;
-        Assert.IsFalse(cpf.EstaPreenchido);
+    //[Test]
+    //public void TestarValidacaoEstaPreenchido()
+    //{
+    //    CPF cpf = string.Empty;
+    //    Assert.IsFalse(cpf.EstaPreenchido);
 
-        cpf = "995.567.680-92";
-        Assert.IsTrue(cpf.EstaPreenchido);
-    }
+    //    cpf = "995.567.680-92";
+    //    Assert.IsTrue(cpf.EstaPreenchido);
+    //}
 
-    [Test]
-    public void TestarValidacaoComCampoNaoRequerido()
-    {
-        CPF cpf = string.Empty;
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF", false));
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF do Cliente", false));
-    }
+    //[Test]
+    //public void TestarValidacaoComCampoNaoRequerido()
+    //{
+    //    CPF cpf = string.Empty;
+    //    Assert.AreEqual(string.Empty, cpf.Validar("CPF", false));
+    //    Assert.AreEqual(string.Empty, cpf.Validar("CPF do Cliente", false));
+    //}
 
-    [Test]
-    public void TestarValidacaoComCampoRequerido()
-    {
-        CPF cpf = string.Empty;
-        Assert.AreEqual("O campo CPF não pode ficar vazio.", cpf.Validar("CPF", true));
-        Assert.AreEqual("O campo CPF do Funcionário não pode ficar vazio.", cpf.Validar("CPF do Funcionário", true));
-    }
+    //[Test]
+    //public void TestarValidacaoComCampoRequerido()
+    //{
+    //    CPF cpf = string.Empty;
+    //    Assert.AreEqual("O campo CPF não pode ficar vazio.", cpf.Validar("CPF", true));
+    //    Assert.AreEqual("O campo CPF do Funcionário não pode ficar vazio.", cpf.Validar("CPF do Funcionário", true));
+    //}
 
-    [Test]
-    public void TestarValidacaoFalhandoComCampoNaoRequerido()
-    {
-        TestarValidacaoFalhando(false);
-    }
+    //[Test]
+    //public void TestarValidacaoFalhandoComCampoNaoRequerido()
+    //{
+    //    TestarValidacaoFalhando(false);
+    //}
 
-    [Test]
-    public void TestarValidacaoFalhandoComCampoRequerido()
-    {
-        TestarValidacaoFalhando(true);
-    }
+    //[Test]
+    //public void TestarValidacaoFalhandoComCampoRequerido()
+    //{
+    //    TestarValidacaoFalhando(true);
+    //}
 
-    [Test]
-    public void TestarValidacaoPassandoComCampoNaoRequerido()
-    {
-        TestarValidacaoPassando(false);
-    }
+    //[Test]
+    //public void TestarValidacaoPassandoComCampoNaoRequerido()
+    //{
+    //    TestarValidacaoPassando(false);
+    //}
 
-    [Test]
-    public void TestarValidacaoPassandoComCampoRequerido()
-    {
-        TestarValidacaoPassando(true);
-    }
+    //[Test]
+    //public void TestarValidacaoPassandoComCampoRequerido()
+    //{
+    //    TestarValidacaoPassando(true);
+    //}
 
-    public void TestarValidacaoFalhando(bool ehRequerido)
-    {
-        CPF cpf = "563.199.270-32";
-        Assert.AreEqual("Campo CPF do Cliente possui dados inválidos.", cpf.Validar("CPF do Cliente", ehRequerido));
+    //public void TestarValidacaoFalhando(bool ehRequerido)
+    //{
+    //    CPF cpf = "563.199.270-32";
+    //    Assert.AreEqual("Campo CPF do Cliente possui dados inválidos.", cpf.Validar("CPF do Cliente", ehRequerido));
 
-        cpf = "563.199.270";
-        Assert.AreEqual("Campo CPF do Funcionário possui dados inválidos.", cpf.Validar("CPF do Funcionário", ehRequerido));
+    //    cpf = "563.199.270";
+    //    Assert.AreEqual("Campo CPF do Funcionário possui dados inválidos.", cpf.Validar("CPF do Funcionário", ehRequerido));
 
-        cpf = "939.165.280-843";
-        Assert.AreEqual("Campo CPF do Cliente possui dados inválidos.", cpf.Validar("CPF do Cliente", ehRequerido));
-    }
+    //    cpf = "939.165.280-843";
+    //    Assert.AreEqual("Campo CPF do Cliente possui dados inválidos.", cpf.Validar("CPF do Cliente", ehRequerido));
+    //}
 
-    public void TestarValidacaoPassando(bool ehRequerido)
-    {
-        CPF cpf = "193.034.770-73";
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF", ehRequerido));
+    //public void TestarValidacaoPassando(bool ehRequerido)
+    //{
+    //    CPF cpf = "193.034.770-73";
+    //    Assert.AreEqual(string.Empty, cpf.Validar("CPF", ehRequerido));
 
-        cpf = "679.288.820-60";
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF", ehRequerido));
-    }
+    //    cpf = "679.288.820-60";
+    //    Assert.AreEqual(string.Empty, cpf.Validar("CPF", ehRequerido));
+    //}
 }

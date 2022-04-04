@@ -12,6 +12,9 @@ using Chamados.Service.Infra.Data.Mongo.Mapeamentos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
 using Chamados.Service.Domain.Entidades;
 using Chamados.Service.Domain.Modelos;
+using System.Text.Json;
+using Chamados.Service.Toolkit.Domnios;
+using Microsoft.OpenApi.Any;
 
 namespace Chamados.Service.IoC;
 
@@ -30,8 +33,20 @@ public static class InicializacaoDeChamados
             xmlFile = $"Chamados.Service.Domain.xml";
             xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             opt.IncludeXmlComments(xmlPath);
+            opt.MapType(typeof(CPF), CriaSchemaString);
+            opt.MapType(typeof(Email), CriaSchemaString);
+            opt.MapType(typeof(Nome), CriaSchemaString);
         });
         RegistraServico(servicos);
+    }
+
+    private static OpenApiSchema CriaSchemaString()
+    {
+        return new OpenApiSchema()
+        {
+            Type = "string",
+            Example = new OpenApiString("P3W")
+        };
     }
 
     private static void RegistraServico(IServiceCollection servicos)
@@ -39,6 +54,13 @@ public static class InicializacaoDeChamados
         MapeamentoChamados.Mapear();
         servicos.AddScoped<IServico<Chamado, string, NovoChamado, ChamadoAlterado>, ServicoChamado>();
         servicos.AddScoped<IRepositorio<Chamado, string>, RepositorioChamadoPostgres>();
+        servicos.AddControllers().AddJsonOptions(o =>
+        {
+            var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            o.JsonSerializerOptions.Converters.Add(new CPF.CPFJsonConverter());
+            o.JsonSerializerOptions.Converters.Add(new Email.EmailJsonConverter());
+            o.JsonSerializerOptions.Converters.Add(new Nome.NomeJsonConverter());
+        });
     }
 
     public static void ConfiguraChamados(this IApplicationBuilder app, IWebHostEnvironment env)

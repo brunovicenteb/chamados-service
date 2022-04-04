@@ -1,66 +1,80 @@
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Chamados.Service.Toolkit.Excecoes;
 
 namespace Chamados.Service.Toolkit.Domnios;
 
-public readonly struct Email : IComparable<Email>, IEquatable<Email>, IComparable<string>, IEquatable<string>
+public record Email : StringStruct
 {
-    public static bool operator ==(Email a, Email b) => a.CompareTo(b) == 0;
+    #region ConversorJson
 
-    public static bool operator !=(Email a, Email b) => !(a == b);
+    public class EmailJsonConverter : JsonConverter<Email>
+    {
+        public override Email Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return new Email(reader.GetString());
+        }
 
-    public static bool operator ==(Email a, string b) => a.Valor.CompareTo(b) == 0;
+        public override void Write(Utf8JsonWriter writer, Email value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString());
+        }
+    }
 
-    public static bool operator !=(Email a, string b) => !(a == b);
+    //private class EmailJsonConverter : JsonConverter
+    //{
+    //    public override bool CanConvert(Type objectType)
+    //    {
+    //        return objectType == typeof(Email);
+    //    }
 
-    public static bool operator ==(string a, Email b) => a.CompareTo(b.Valor) == 0;
+    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    //    {
+    //        var id = (Email)value;
+    //        serializer.Serialize(writer, id.Valor);
+    //    }
 
-    public static bool operator !=(string a, Email b) => !(a == b);
+    //    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    //    {
+    //        var valor = serializer.Deserialize<string>(reader);
+    //        return new Email(valor);
+    //    }
+    //}
+
+    //public class EmailTypeConverter : TypeConverter
+    //{
+    //    public override bool CanConvertFrom(ITypeDescriptorContext contexto, Type tipoOriginal)
+    //    {
+    //        return tipoOriginal == typeof(string) || base.CanConvertFrom(contexto, tipoOriginal);
+    //    }
+
+    //    public override object ConvertFrom(ITypeDescriptorContext contexto, CultureInfo cultura, object valor)
+    //    {
+    //        var stringValue = valor as string;
+    //        if (!string.IsNullOrEmpty(stringValue))
+    //            return new Email(stringValue);
+    //        return base.ConvertFrom(contexto, cultura, valor);
+    //    }
+    //}
+    #endregion
 
     public static implicit operator Email(string valor) => new Email(valor);
 
-    public static implicit operator string(Email Email) => Email.Valor;
+    public static implicit operator string(Email nome) => nome.Valor;
 
     public Email(string valor = null)
+        : base(valor)
     {
-        Valor = valor;
     }
 
-    public string Valor { get; }
+    public override string ToString() => Valor?.ToString();
 
-    public bool EstaVazio { get => string.IsNullOrEmpty(Valor); }
-
-    public bool EstaPreenchido { get => !EstaVazio; }
-
-    public bool Equals(Email outro) => this.Valor.Equals(outro.Valor);
-
-    public bool Equals(string outro) => this.Valor.Equals(outro);
-
-    public int CompareTo(Email outro) => Valor.CompareTo(outro.Valor);
-
-    public int CompareTo(string outro) => Valor.CompareTo(outro);
-
-    public override int GetHashCode() => Valor.GetHashCode();
-
-    public override string ToString() => Valor.ToString();
-
-    public override bool Equals(object obj)
+    protected override void Validar(string valor)
     {
-        if (ReferenceEquals(null, obj))
-            return false;
-        return obj is Email outro && Equals(outro);
-    }
-
-    public string Validar(string nomeDoCampo, bool ehRequerido)
-    {
-        if (EstaPreenchido)
-        {
-            if (!EhEmailValido(Valor))
-                return $"Campo {nomeDoCampo} possui dados inválidos.";
-        }
-        if (ehRequerido && EstaVazio)
-            return $"O campo {nomeDoCampo} não pode ficar vazio.";
-        return string.Empty;
+        base.Validar(valor);
+        if (!EhEmailValido(valor))
+            throw new BadRequestException($"O e-mail {valor} não é válido.");
     }
 
     private bool EhEmailValido(string valor)
