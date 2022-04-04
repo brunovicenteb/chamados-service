@@ -2,6 +2,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization.IdGenerators;
+using Chamados.Service.Domain.Entidades;
 
 namespace Chamados.Service.Infra.Data.Mongo.Mapeamentos;
 
@@ -14,7 +15,7 @@ public static class MapeamentoChamados
         if (Interlocked.Read(ref _Mapeado) == 1)
             return;
         Interlocked.Exchange(ref _Mapeado, 1);
-        BsonClassMap.RegisterClassMap<Domain.Entidades.Chamados>(m =>
+        BsonClassMap.RegisterClassMap<Chamado>(m =>
         {
             m.AutoMap();
             m.SetIgnoreExtraElements(true);

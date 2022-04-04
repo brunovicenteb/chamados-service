@@ -6,6 +6,8 @@ using Chamados.Service.Tests.Mock;
 using Chamados.Service.Application;
 using Chamados.Service.Domain.Enums;
 using Chamados.Service.Api.Controllers;
+using Chamados.Service.Domain.Modelos;
+using Chamados.Service.Domain.Entidades;
 
 namespace Chamados.Service.Tests.ChamadosController;
 
@@ -28,7 +30,7 @@ public class ArticleControllerTeste
     {
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.PegarChamadoPorId(_JamesCameronId).Result;
-        var chamado = AfirmarOk<Domain.Entidades.Chamados>(resultado);
+        var chamado = AfirmarOk<Chamado>(resultado);
         Assert.IsFalse(string.IsNullOrEmpty(chamado.Id));
         Assert.IsFalse(chamado.Aberto);
         Assert.AreEqual("Limpesa das lentes", chamado.Assunto);
@@ -63,10 +65,10 @@ public class ArticleControllerTeste
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 0);
 
-        var chamado = CriarChamado(string.Empty, "Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "39815683039",
+        var chamado = CriarChamado("Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "39815683039",
             "maria.sharapova@gmail.com", "Preciso repor minha raquete de treinos com urgência.");
         IActionResult resultado = c.Inserir(chamado).Result;
-        var resultadoChamado = AfirmarOkCriado<Domain.Entidades.Chamados>(resultado, c);
+        var resultadoChamado = AfirmarOkCriado<Chamado>(resultado, c);
         Assert.IsFalse(string.IsNullOrEmpty(resultadoChamado.Id));
         Assert.IsTrue(resultadoChamado.Aberto);
         Assert.AreEqual("Maria Sharapova", resultadoChamado.NomePessoa);
@@ -82,22 +84,11 @@ public class ArticleControllerTeste
     }
 
     [Test]
-    public void TestaCriarChamadoComIdPreenchido()
-    {
-        //Criar objeto com id que já existente dentro do Mock.
-        var chamado = CriarChamado("6244c826eb6aeb6c5f44b0d0", "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
-            "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
-        ChamadoController c = CriarController(true);
-        IActionResult resultado = c.Inserir(chamado).Result;
-        AfirmarBadRequest(resultado, "Não foi possível inserir um chamado que já possui identificador.");
-    }
-
-    [Test]
     public void TestaAtualizarChamado()
     {
         ChamadoController c = CriarController(true);
         var resultadoChamadoOriginal = c.PegarChamadoPorId(_HermioneGrangerId).Result;
-        var chamadoOriginal = AfirmarOk<Domain.Entidades.Chamados>(resultadoChamadoOriginal);
+        var chamadoOriginal = AfirmarOk<Chamado>(resultadoChamadoOriginal);
         Assert.AreEqual("Hermione Granger", chamadoOriginal.NomePessoa);
         Assert.AreEqual("hermione.granger@gmail.com", chamadoOriginal.Email);
         Assert.AreEqual("Resultado de Testes", chamadoOriginal.Assunto);
@@ -110,7 +101,7 @@ public class ArticleControllerTeste
         var chamadoAtualizado = CriarChamado(_HermioneGrangerId, "Hermione Granger", "Resultado de Testes Atualizados", Gravidade.Bloqueador, "23257183283",
             "hermione.granger@gmail.com", "Aguardo resultados de testes atualizados.");
         var resultadoChamadoAtualizado = c.Atualizar(chamadoAtualizado).Result;
-        chamadoAtualizado = AfirmarOk<Domain.Entidades.Chamados>(resultadoChamadoAtualizado);
+        chamadoAtualizado = AfirmarOk<Chamado>(resultadoChamadoAtualizado);
         Assert.AreEqual("Hermione Granger", chamadoAtualizado.NomePessoa);
         Assert.AreEqual("hermione.granger@gmail.com", chamadoAtualizado.Email);
         Assert.AreEqual("Resultado de Testes Atualizados", chamadoAtualizado.Assunto);
@@ -179,23 +170,23 @@ public class ArticleControllerTeste
         // O carregamento de dados cria 20 chamados no mock.
         ChamadoController c = CriarController(true);
         var resultado = c.PegarChamados(null, null).Result; // Valor padrão de 10 por página.
-        var chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
+        var chamados = AfirmarOk<IList<Chamado>>(resultado);
         Assert.AreEqual(10, chamados.Count);
 
         resultado = c.PegarChamados(null, 50).Result;
-        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Chamado>>(resultado);
         Assert.AreEqual(20, chamados.Count);
 
         resultado = c.PegarChamados(5, 50).Result;
-        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Chamado>>(resultado);
         Assert.AreEqual(15, chamados.Count);
 
         resultado = c.PegarChamados(15, null).Result;
-        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Chamado>>(resultado);
         Assert.AreEqual(5, chamados.Count);
 
         resultado = c.PegarChamados(20, null).Result;
-        chamados = AfirmarOk<IList<Domain.Entidades.Chamados>>(resultado);
+        chamados = AfirmarOk<IList<Chamado>>(resultado);
         Assert.AreEqual(0, chamados.Count);
     }
 
@@ -238,9 +229,21 @@ public class ArticleControllerTeste
         return (T)resultadoOkCriado.Value;
     }
 
-    private Domain.Entidades.Chamados CriarChamado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
+    private NovoChamado CriarChamado(string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
     {
-        var c = new Domain.Entidades.Chamados();
+        var c = new NovoChamado();
+        c.NomePessoa = nomePessoa;
+        c.Gravidade = gravidade;
+        c.Assunto = assunto;
+        c.CPF = cpf;
+        c.Email = email;
+        c.Descricao = descricao;
+        return c;
+    }
+
+    private Chamado CriarChamado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
+    {
+        var c = new Chamado();
         c.Id = id;
         c.Aberto = true;
         c.NomePessoa = nomePessoa;

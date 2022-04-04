@@ -24,7 +24,7 @@ namespace Chamados.Service.Infra.Data.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Chamados.Service.Domain.Entidades.Chamados", b =>
+            modelBuilder.Entity("Chamados.Service.Domain.Entidades.Chamado", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()

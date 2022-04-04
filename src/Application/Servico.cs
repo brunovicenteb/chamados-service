@@ -2,21 +2,29 @@ using Chamados.Service.Toolkit.Excecoes;
 using Chamados.Service.Domain.Interfaces;
 using Chamados.Service.Domain.Interfaces.Servicos;
 using Chamados.Service.Domain.Interfaces.Repositorios;
+using AutoMapper;
 
 namespace Chamados.Service.Application;
 
-public abstract class Servico<T, V> : IServico<T, V> where T : IEntidade<V>
+public abstract class Servico<T, V, I> : IServico<T, V, I> where T : IEntidade<V>
 {
     public Servico(IRepositorio<T, V> repositorio, string nomeDaEntidade)
     {
         _Repositorio = repositorio;
         _NomeDaEntidade = nomeDaEntidade;
+        var configuration = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<I, T>();
+        });
+        _Mapper = new Mapper(configuration);
     }
 
     private readonly IRepositorio<T, V> _Repositorio;
     private readonly string _NomeDaEntidade;
+    private readonly Mapper _Mapper;
 
     protected abstract bool EhIdentificadorVazio(V id);
+    protected abstract void PreencherValoresPadrao(T entidade);
 
     public async Task<T> PegarPorIdAsync(V id)
     {
@@ -50,11 +58,11 @@ public abstract class Servico<T, V> : IServico<T, V> where T : IEntidade<V>
         return await _Repositorio.AtualizarAsync(entidade);
     }
 
-    public async Task<T> InserirAsync(T entidade)
+    public async Task<T> InserirAsync(I entidade)
     {
-        if (!EhIdentificadorVazio(entidade.Id))
-            throw new BadRequestException($"Não foi possível inserir um {_NomeDaEntidade} que já possui identificador.");
-        return await _Repositorio.InserirAsync(entidade);
+        T entidadeMapeada = _Mapper.Map<T>(entidade);
+        PreencherValoresPadrao(entidadeMapeada);
+        return await _Repositorio.InserirAsync(entidadeMapeada);
     }
 
     public async Task<bool> ExcluirAsync(V id)

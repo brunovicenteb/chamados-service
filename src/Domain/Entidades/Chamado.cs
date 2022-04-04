@@ -4,7 +4,7 @@ using Chamados.Service.Domain.Interfaces;
 namespace Chamados.Service.Domain.Entidades;
 
 /// <summary>Representação de um chamado de cliente.</summary>
-public class Chamados : IEntidade<string>
+public class Chamado : IEntidade<string>
 {
     public string Id { get; set; }
 

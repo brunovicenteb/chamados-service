@@ -1,3 +1,4 @@
+using Chamados.Service.Domain.Modelos;
 using Chamados.Service.Toolkit.Web;
 
 namespace Chamados.Service.Api.Controllers;
@@ -6,9 +7,9 @@ namespace Chamados.Service.Api.Controllers;
 [Route("chamados")]
 public class ChamadoController : ManagedController
 {
-    private readonly IServico<Domain.Entidades.Chamados, string> _Servico;
+    private readonly IServico<Chamado, string, NovoChamado> _Servico;
 
-    public ChamadoController(IServico<Domain.Entidades.Chamados, string> servico)
+    public ChamadoController(IServico<Chamado, string, NovoChamado> servico)
     {
         _Servico = servico;
     }
@@ -26,7 +27,7 @@ public class ChamadoController : ManagedController
     /// <param name="inicio">Ignora um especificado número de chamados. Esse recurso é especialmente útil para paginação.</param>
     /// <param name="limite">Número máximo de chamados retornados pelo serviço (Limitado a 50 registros).</param>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<Domain.Entidades.Chamados>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Chamado>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PegarChamados(int? inicio, int? limite)
@@ -37,7 +38,7 @@ public class ChamadoController : ManagedController
     /// <summary>Retorna um chamado pelo seu identificador.</summary>
     /// <param name="id">Identificador do artigo.</param>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Domain.Entidades.Chamados), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Chamado), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PegarChamadoPorId(string id)
@@ -57,20 +58,20 @@ public class ChamadoController : ManagedController
 
     /// <summary>Atualizar um chamado existente</summary>
     [HttpPut]
-    [ProducesResponseType(typeof(Domain.Entidades.Chamados), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Chamado), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Atualizar([FromBody] Domain.Entidades.Chamados chamado)
+    public async Task<IActionResult> Atualizar([FromBody] Chamado chamado)
     {
         return await TryExecuteOK(async () => await _Servico.AtualizarAsync(chamado));
     }
 
     /// <summary>Criar um novo chamado</summary>
     [HttpPost]
-    [ProducesResponseType(typeof(Domain.Entidades.Chamados), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(NovoChamado), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Inserir([FromBody] Domain.Entidades.Chamados chamado)
+    public async Task<IActionResult> Inserir([FromBody] NovoChamado chamado)
     {
         Func<Task<object>> execute = async delegate
         {
@@ -78,7 +79,7 @@ public class ChamadoController : ManagedController
         };
         Func<object, IActionResult> action = delegate (object result)
         {
-            Domain.Entidades.Chamados c = result as Domain.Entidades.Chamados;
+            Chamado c = result as Chamado;
             return CreatedAtAction(nameof(PegarChamadoPorId).ToLower(), new { id = c.Id }, result);
         };
         return await TryExecute(action, execute);

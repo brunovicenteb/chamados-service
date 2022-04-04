@@ -1,6 +1,6 @@
 namespace Chamados.Service.Domain.Interfaces.Servicos;
 
-public interface IServico<T, V> where T : IEntidade<V>
+public interface IServico<T, V, I> where T : IEntidade<V>
 {
     Task<long> PegarQuantidadeAsync();
 
@@ -8,7 +8,7 @@ public interface IServico<T, V> where T : IEntidade<V>
 
     Task<T> PegarPorIdAsync(V id);
 
-    Task<T> InserirAsync(T entidade);
+    Task<T> InserirAsync(I entidade);
 
     Task<T> AtualizarAsync(T entidade);
 

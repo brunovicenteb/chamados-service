@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Chamados.Service.Infra.Data.Migrations
 {
     [DbContext(typeof(ContextoPostgres))]
-    [Migration("20220403213838_Versao1")]
+    [Migration("20220403235614_Versao1")]
     partial class Versao1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,7 @@ namespace Chamados.Service.Infra.Data.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Chamados.Service.Domain.Entidades.Chamados", b =>
+            modelBuilder.Entity("Chamados.Service.Domain.Entidades.Chamado", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
