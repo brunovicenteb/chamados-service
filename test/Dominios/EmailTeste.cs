@@ -1,4 +1,5 @@
-﻿using Chamados.Service.Toolkit.Domnios;
+﻿using Chamados.Service.Toolkit.Dominios;
+using Chamados.Service.Toolkit.Excecoes;
 using NUnit.Framework;
 
 namespace Chamados.Service.Tests.Dominios;
@@ -42,83 +43,24 @@ public class EmailTeste
     }
 
     [Test]
-    public void TestarValidacaoEstaVazio()
+    public void TestarValidacaoComEmailVazio()
     {
-        Email Email = string.Empty;
-        Assert.IsTrue(Email.EstaVazio);
-
-        Email = "testavalidacaoestavazio@gmail.com";
-        Assert.IsFalse(Email.EstaVazio);
+        Assert.Catch<BadRequestException>(() => SetEmail(""), $"O e-mail \"\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetEmail(null), $"O e-mail \"\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetEmail(string.Empty), $"O e-mail \"\" não é válido.");
     }
 
     [Test]
     public void TestarValidacaoEstaPreenchido()
     {
-        Email Email = string.Empty;
-        Assert.IsFalse(Email.EstaPreenchido);
-
-        Email = "testavalidacaoestapreenchido@gmail.com";
-        Assert.IsTrue(Email.EstaPreenchido);
+        Assert.Catch<BadRequestException>(() => SetEmail("teste@"), $"O e-mail \"teste\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetEmail("teste@"), $"O e-mail \"teste@\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetEmail("teste@gmail"), $"O e-mail \"teste@gmail\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetEmail("teste@gmail."), $"O e-mail \"teste@gmail.\" não é válido.");
     }
 
-    [Test]
-    public void TestarValidacaoComCampoNaoRequerido()
+    private void SetEmail(string valor)
     {
-        Email Email = string.Empty;
-        Assert.AreEqual(string.Empty, Email.Validar("Email", false));
-        Assert.AreEqual(string.Empty, Email.Validar("Email do Cliente", false));
-    }
-
-    [Test]
-    public void TestarValidacaoComCampoRequerido()
-    {
-        Email Email = string.Empty;
-        Assert.AreEqual("O campo Email não pode ficar vazio.", Email.Validar("Email", true));
-        Assert.AreEqual("O campo Email do Funcionário não pode ficar vazio.", Email.Validar("Email do Funcionário", true));
-    }
-
-    [Test]
-    public void TestarValidacaoFalhandoComCampoNaoRequerido()
-    {
-        TestarValidacaoFalhando(false);
-    }
-
-    [Test]
-    public void TestarValidacaoFalhandoComCampoRequerido()
-    {
-        TestarValidacaoFalhando(true);
-    }
-
-    [Test]
-    public void TestarValidacaoPassandoComCampoNaoRequerido()
-    {
-        TestarValidacaoPassando(false);
-    }
-
-    [Test]
-    public void TestarValidacaoPassandoComCampoRequerido()
-    {
-        TestarValidacaoPassando(true);
-    }
-
-    public void TestarValidacaoFalhando(bool ehRequerido)
-    {
-        Email Email = "testarvalidacaofalhando";
-        Assert.AreEqual("Campo Email do Cliente possui dados inválidos.", Email.Validar("Email do Cliente", ehRequerido));
-
-        Email = "testarvalidacaofalhando@gmail";
-        Assert.AreEqual("Campo Email do Funcionário possui dados inválidos.", Email.Validar("Email do Funcionário", ehRequerido));
-
-        Email = "validacaofalhandogmail.com";
-        Assert.AreEqual("Campo Email do Cliente possui dados inválidos.", Email.Validar("Email do Cliente", ehRequerido));
-    }
-
-    public void TestarValidacaoPassando(bool ehRequerido)
-    {
-        Email Email = "testavalidacaopassando@gmail.com";
-        Assert.AreEqual(string.Empty, Email.Validar("Email", ehRequerido));
-
-        Email = "testavalidacaopassando@hotmail.com";
-        Assert.AreEqual(string.Empty, Email.Validar("Email", ehRequerido));
+        Email email = new Email(valor);
     }
 }

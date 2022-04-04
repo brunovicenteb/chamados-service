@@ -1,4 +1,5 @@
-using Chamados.Service.Toolkit.Domnios;
+using Chamados.Service.Toolkit.Dominios;
+using Chamados.Service.Toolkit.Excecoes;
 using NUnit.Framework;
 
 namespace Chamados.Service.Tests.Dominios;
@@ -42,83 +43,35 @@ public class CPFTeste
     }
 
     [Test]
-    public void TestarValidacaoEstaVazio()
+    public void TestarValidacaoComCPFVazio()
     {
-        CPF cpf = string.Empty;
-        Assert.IsTrue(cpf.EstaVazio);
-
-        cpf = "996.750.520-66";
-        Assert.IsFalse(cpf.EstaVazio);
+        Assert.Catch<BadRequestException>(() => SetCPF(""), $"O CPF \"\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF(null), $"O CPF \"\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF(string.Empty), $"O CPF \"\" não é válido.");
     }
 
     [Test]
-    public void TestarValidacaoEstaPreenchido()
+    public void TestarValidacaoComCPFPreenchido()
     {
-        CPF cpf = string.Empty;
-        Assert.IsFalse(cpf.EstaPreenchido);
-
-        cpf = "995.567.680-92";
-        Assert.IsTrue(cpf.EstaPreenchido);
+        Assert.Catch<BadRequestException>(() => SetCPF("1"), $"O CPF \"1\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("12"), $"O CPF \"12\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("123"), $"O CPF \"123\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("1234"), $"O CPF \"1234\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("12345"), $"O CPF \"12345\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("123456"), $"O CPF \"123456\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("1234567"), $"O CPF \"1234567\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("12345678"), $"O CPF \"12345678\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("123456789"), $"O CPF \"123456789\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("1234567891"), $"O CPF \"1234567891\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("12345678910"), $"O CPF \"12345678910\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("123456789101"), $"O CPF \"123456789101\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("07277907098"), $"O CPF \"07277907098\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("26270311087"), $"O CPF \"26270311087\" não é válido.");
+        Assert.Catch<BadRequestException>(() => SetCPF("34612552057"), $"O CPF \"34612552057\" não é válido.");
     }
 
-    [Test]
-    public void TestarValidacaoComCampoNaoRequerido()
+    private void SetCPF(string valor)
     {
-        CPF cpf = string.Empty;
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF", false));
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF do Cliente", false));
-    }
-
-    [Test]
-    public void TestarValidacaoComCampoRequerido()
-    {
-        CPF cpf = string.Empty;
-        Assert.AreEqual("O campo CPF não pode ficar vazio.", cpf.Validar("CPF", true));
-        Assert.AreEqual("O campo CPF do Funcionário não pode ficar vazio.", cpf.Validar("CPF do Funcionário", true));
-    }
-
-    [Test]
-    public void TestarValidacaoFalhandoComCampoNaoRequerido()
-    {
-        TestarValidacaoFalhando(false);
-    }
-
-    [Test]
-    public void TestarValidacaoFalhandoComCampoRequerido()
-    {
-        TestarValidacaoFalhando(true);
-    }
-
-    [Test]
-    public void TestarValidacaoPassandoComCampoNaoRequerido()
-    {
-        TestarValidacaoPassando(false);
-    }
-
-    [Test]
-    public void TestarValidacaoPassandoComCampoRequerido()
-    {
-        TestarValidacaoPassando(true);
-    }
-
-    public void TestarValidacaoFalhando(bool ehRequerido)
-    {
-        CPF cpf = "563.199.270-32";
-        Assert.AreEqual("Campo CPF do Cliente possui dados inválidos.", cpf.Validar("CPF do Cliente", ehRequerido));
-
-        cpf = "563.199.270";
-        Assert.AreEqual("Campo CPF do Funcionário possui dados inválidos.", cpf.Validar("CPF do Funcionário", ehRequerido));
-
-        cpf = "939.165.280-843";
-        Assert.AreEqual("Campo CPF do Cliente possui dados inválidos.", cpf.Validar("CPF do Cliente", ehRequerido));
-    }
-
-    public void TestarValidacaoPassando(bool ehRequerido)
-    {
-        CPF cpf = "193.034.770-73";
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF", ehRequerido));
-
-        cpf = "679.288.820-60";
-        Assert.AreEqual(string.Empty, cpf.Validar("CPF", ehRequerido));
+        CPF email = new CPF(valor);
     }
 }
