@@ -1,5 +1,6 @@
-﻿using Chamados.Service.Domain.Entidades;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Chamados.Service.Toolkit.Domnios;
+using Chamados.Service.Domain.Entidades;
 
 namespace Chamados.Service.Infra.Data.Postgres;
 public class ContextoPostgres : DbContext
@@ -38,12 +39,16 @@ public class ContextoPostgres : DbContext
             entity.Property(e => e.Assunto).IsRequired();
             entity.Property(e => e.CPF)
                 .HasMaxLength(11)
-                .IsRequired();
+                .IsRequired()
+                .HasConversion(o => o.ToString(), o => new CPF(o));
             entity.Property(e => e.Gravidade).IsRequired();
             entity.Property(e => e.NomePessoa)
                 .HasMaxLength(100)
-                .IsRequired();
-            entity.Property(e => e.Email).IsRequired();
+                .IsRequired()
+                .HasConversion(o => o.ToString(), o => new Nome(o));
+            entity.Property(e => e.Email)
+                .IsRequired()
+                .HasConversion(o => o.ToString(), o => new Email(o));
             entity.Property(e => e.Aberto).IsRequired();
             entity.Property(e => e.DataHoraCriacao)
                 .HasColumnType("timestamp without time zone")
