@@ -1,10 +1,16 @@
-﻿using Chamados.Service.Domain.Enums;
+using Chamados.Service.Domain.Enums;
+using Chamados.Service.Domain.Interfaces;
 
 namespace Chamados.Service.Domain.Modelos;
 
-/// <summary>Representação de um novo chamado cliente.</summary>
-public class NovoChamado
+/// <summary>Representação de chamado com os dados alterados.</summary>
+public class ChamadoAlterado : IEntidade<string>
 {
+    /// <summary>Identificador do chamado</summary>
+    public string Id { get; set; }
+
+    /// <summary>Assunto do artigo</summary>
+    /// <example>Problema na consulta de clientes</example>
     public string Assunto { get; set; }
 
     /// <summary>Gravidade do chamado</summary>
@@ -26,4 +32,13 @@ public class NovoChamado
     /// <summary>Descrição detalhada do chamado</summary>
     /// <example>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</example>
     public string Descricao { get; set; }
+
+    /// <summary>Condição do chamado</summary>
+    /// <example>true</example>
+    public bool Aberto { get; set; }
+
+    public bool Equals(string outro)
+    {
+        return Id.CompareTo(outro) == 0;
+    }
 }

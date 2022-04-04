@@ -37,7 +37,7 @@ public static class InicializacaoDeChamados
     private static void RegistraServico(IServiceCollection servicos)
     {
         MapeamentoChamados.Mapear();
-        servicos.AddScoped<IServico<Chamado, string, NovoChamado>, ServicoChamado>();
+        servicos.AddScoped<IServico<Chamado, string, NovoChamado, ChamadoAlterado>, ServicoChamado>();
         servicos.AddScoped<IRepositorio<Chamado, string>, RepositorioChamadoPostgres>();
     }
 

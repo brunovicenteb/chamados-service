@@ -7,9 +7,9 @@ namespace Chamados.Service.Api.Controllers;
 [Route("chamados")]
 public class ChamadoController : ManagedController
 {
-    private readonly IServico<Chamado, string, NovoChamado> _Servico;
+    private readonly IServico<Chamado, string, NovoChamado, ChamadoAlterado> _Servico;
 
-    public ChamadoController(IServico<Chamado, string, NovoChamado> servico)
+    public ChamadoController(IServico<Chamado, string, NovoChamado, ChamadoAlterado> servico)
     {
         _Servico = servico;
     }
@@ -61,7 +61,7 @@ public class ChamadoController : ManagedController
     [ProducesResponseType(typeof(Chamado), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Atualizar([FromBody] Chamado chamado)
+    public async Task<IActionResult> Atualizar([FromBody] ChamadoAlterado chamado)
     {
         return await TryExecuteOK(async () => await _Servico.AtualizarAsync(chamado));
     }

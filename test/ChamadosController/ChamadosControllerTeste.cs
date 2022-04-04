@@ -98,14 +98,15 @@ public class ArticleControllerTeste
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 20);
 
-        var chamadoAtualizado = CriarChamado(_HermioneGrangerId, "Hermione Granger", "Resultado de Testes Atualizados", Gravidade.Bloqueador, "23257183283",
-            "hermione.granger@gmail.com", "Aguardo resultados de testes atualizados.");
-        var resultadoChamadoAtualizado = c.Atualizar(chamadoAtualizado).Result;
-        chamadoAtualizado = AfirmarOk<Chamado>(resultadoChamadoAtualizado);
-        Assert.AreEqual("Hermione Granger", chamadoAtualizado.NomePessoa);
-        Assert.AreEqual("hermione.granger@gmail.com", chamadoAtualizado.Email);
-        Assert.AreEqual("Resultado de Testes Atualizados", chamadoAtualizado.Assunto);
-        Assert.AreEqual("Aguardo resultados de testes atualizados.", chamadoAtualizado.Descricao);
+        var chamadoAlterado = CriarChamadoAlterado(_HermioneGrangerId, "Hermione Granger", "Resultado de Testes Atualizados", Gravidade.Bloqueador, 
+            "23257183283", "hermione.granger@gmail.com", "Aguardo resultados de testes atualizados.");
+        var resultadoAtualizacao = c.Atualizar(chamadoAlterado).Result;
+
+        var chamado = AfirmarOk<Chamado>(resultadoAtualizacao);
+        Assert.AreEqual("Hermione Granger", chamado.NomePessoa);
+        Assert.AreEqual("hermione.granger@gmail.com", chamado.Email);
+        Assert.AreEqual("Resultado de Testes Atualizados", chamado.Assunto);
+        Assert.AreEqual("Aguardo resultados de testes atualizados.", chamado.Descricao);
 
         resultQuantidade = c.PegarQuantidade().Result;
         longResult = AfirmarOk<long>(resultQuantidade);
@@ -115,7 +116,7 @@ public class ArticleControllerTeste
     [Test]
     public void TestaAtualizarChamadoSemIdPreenchido()
     {
-        var chamado = CriarChamado(string.Empty, "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
+        var chamado = CriarChamadoAlterado(string.Empty, "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
             "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Atualizar(chamado).Result;
@@ -125,7 +126,7 @@ public class ArticleControllerTeste
     [Test]
     public void TestaAtualizarChamadoComIdPreenchido()
     {
-        var chamado = CriarChamado(Guid.NewGuid().ToString(), "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
+        var chamado = CriarChamadoAlterado(Guid.NewGuid().ToString(), "Limpesa das lentes", "James Cameron", Gravidade.Moderado, "82926196075",
             "james.cameron@gmail.com", "Precisamos limpar as câmeras semanalmente.");
         ChamadoController c = CriarController(true);
         IActionResult resultado = c.Atualizar(chamado).Result;
@@ -232,6 +233,20 @@ public class ArticleControllerTeste
     private NovoChamado CriarChamado(string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
     {
         var c = new NovoChamado();
+        c.NomePessoa = nomePessoa;
+        c.Gravidade = gravidade;
+        c.Assunto = assunto;
+        c.CPF = cpf;
+        c.Email = email;
+        c.Descricao = descricao;
+        return c;
+    }
+
+    private ChamadoAlterado CriarChamadoAlterado(string id, string nomePessoa, string assunto, Gravidade gravidade, string cpf, string email, string descricao)
+    {
+        var c = new ChamadoAlterado();
+        c.Id = id;
+        c.Aberto = true;
         c.NomePessoa = nomePessoa;
         c.Gravidade = gravidade;
         c.Assunto = assunto;
