@@ -65,7 +65,7 @@ public class ArticleControllerTeste
         long longResult = AfirmarOk<long>(resultQuantidade);
         Assert.AreEqual(longResult, 0);
 
-        var chamado = CriarChamado("Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "39815683039",
+        var chamado = CriarChamado("Maria Sharapova", "Substituição de Raquete", Gravidade.Bloqueador, "91988439078",
             "maria.sharapova@gmail.com", "Preciso repor minha raquete de treinos com urgência.");
         IActionResult resultado = c.Inserir(chamado).Result;
         var resultadoChamado = AfirmarOkCriado<Chamado>(resultado, c);
@@ -74,7 +74,7 @@ public class ArticleControllerTeste
         Assert.AreEqual("Maria Sharapova", resultadoChamado.NomePessoa);
         Assert.AreEqual("Substituição de Raquete", resultadoChamado.Assunto);
         Assert.AreEqual(Gravidade.Bloqueador, resultadoChamado.Gravidade);
-        Assert.AreEqual("39815683039", resultadoChamado.CPF);
+        Assert.AreEqual("91988439078", resultadoChamado.CPF);
         Assert.AreEqual("maria.sharapova@gmail.com", resultadoChamado.Email);
         Assert.AreEqual("Preciso repor minha raquete de treinos com urgência.", resultadoChamado.Descricao);
 

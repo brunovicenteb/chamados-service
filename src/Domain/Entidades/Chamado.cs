@@ -1,5 +1,6 @@
 using Chamados.Service.Domain.Enums;
 using Chamados.Service.Domain.Interfaces;
+using Chamados.Service.Toolkit.Dominios;
 
 namespace Chamados.Service.Domain.Entidades;
 
@@ -18,15 +19,15 @@ public class Chamado : IEntidade<string>
 
     /// <summary>Nome da pessoa que criou o chamado</summary>
     /// <example>Margot Robbie</example>
-    public string NomePessoa { get; set; }
+    public Nome NomePessoa { get; set; }
 
     /// <summary>CPF da pessoa que criou o chamado</summary>
     /// <example>31159486549</example>
-    public string CPF { get; set; }
+    public CPF CPF { get; set; }
 
     /// <summary>E-mail da pessoa que criou o chamado</summary>
     /// <example>margot.robbie@gmail.com</example>
-    public string Email { get; set; }
+    public Email Email { get; set; }
 
     /// <summary>Descrição detalhada do chamado</summary>
     /// <example>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</example>
