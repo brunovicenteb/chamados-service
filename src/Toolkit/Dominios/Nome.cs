@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Chamados.Service.Toolkit.Domnios;
+namespace Chamados.Service.Toolkit.Dominios;
 
 public record Nome : StringStruct
 {

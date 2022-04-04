@@ -13,8 +13,8 @@ using Chamados.Service.Domain.Interfaces.Repositorios;
 using Chamados.Service.Domain.Entidades;
 using Chamados.Service.Domain.Modelos;
 using System.Text.Json;
-using Chamados.Service.Toolkit.Domnios;
 using Microsoft.OpenApi.Any;
+using Chamados.Service.Toolkit.Dominios;
 
 namespace Chamados.Service.IoC;
 

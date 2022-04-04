@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chamados.Service.Toolkit.Excecoes;
 
-namespace Chamados.Service.Toolkit.Domnios;
+namespace Chamados.Service.Toolkit.Dominios;
 
 public record CPF : StringStruct
 {
@@ -36,8 +36,8 @@ public record CPF : StringStruct
     protected override void Validar(string valor)
     {
         base.Validar(valor);
-        if (!EhCpfValido(valor))
-            throw new BadRequestException($"O CPF não é válido.");
+        if (string.IsNullOrEmpty(valor) || !EhCpfValido(valor))
+            throw new BadRequestException($"O CPF \"{valor}\" não é válido.");
     }
 
     private bool EhCpfValido(string cpf)

@@ -1,6 +1,6 @@
 using Chamados.Service.Domain.Enums;
 using Chamados.Service.Domain.Interfaces;
-using Chamados.Service.Toolkit.Domnios;
+using Chamados.Service.Toolkit.Dominios;
 
 namespace Chamados.Service.Domain.Modelos;
 

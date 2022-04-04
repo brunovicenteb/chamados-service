@@ -1,4 +1,4 @@
-namespace Chamados.Service.Toolkit.Domnios;
+namespace Chamados.Service.Toolkit.Dominios;
 
 public record StringStruct : IComparable<string>, IEquatable<string>, IComparable<StringStruct>
 {
@@ -22,11 +22,11 @@ public record StringStruct : IComparable<string>, IEquatable<string>, IComparabl
 
     public bool EstaPreenchido { get => !EstaVazio; }
 
-    public int CompareTo(StringStruct outro) => (Valor == null && outro.Valor == null) ? 0 : Valor.CompareTo(outro.Valor);
+    public int CompareTo(StringStruct outro) => Valor == null && outro.Valor == null ? 0 : Valor.CompareTo(outro.Valor);
 
-    public bool Equals(string outro) => (Valor == null && outro == null) || Valor.Equals(outro);
+    public bool Equals(string outro) => Valor == null && outro == null || Valor.Equals(outro);
 
-    public int CompareTo(string outro) => (Valor == null && outro == null) ? 0 : Valor.CompareTo(outro);
+    public int CompareTo(string outro) => Valor == null && outro == null ? 0 : Valor.CompareTo(outro);
 
     public override int GetHashCode() => Valor == null ? 0 : Valor.GetHashCode();
 

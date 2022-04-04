@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Chamados.Service.Toolkit.Excecoes;
 
-namespace Chamados.Service.Toolkit.Domnios;
+namespace Chamados.Service.Toolkit.Dominios;
 
 public record Email : StringStruct
 {
@@ -73,8 +73,8 @@ public record Email : StringStruct
     protected override void Validar(string valor)
     {
         base.Validar(valor);
-        if (!EhEmailValido(valor))
-            throw new BadRequestException($"O e-mail {valor} não é válido.");
+        if (string.IsNullOrEmpty(valor) || !EhEmailValido(valor))
+            throw new BadRequestException($"O e-mail \"{valor}\" não é válido.");
     }
 
     private bool EhEmailValido(string valor)

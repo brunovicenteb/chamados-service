@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Chamados.Service.Toolkit.Domnios;
+using Chamados.Service.Toolkit.Dominios;
 using Chamados.Service.Domain.Entidades;
 
 namespace Chamados.Service.Infra.Data.Postgres;
